@@ -1,31 +1,45 @@
-import { StyleSheet } from 'react-native';
-
+import { Image, StyleSheet, Text, View } from 'react-native';
+import products from "@/assets/data/products"
 import EditScreenInfo from '@/src/components/EditScreenInfo';
-import { Text, View } from '@/src/components/Themed';
+import Colors from '@/src/constants/Colors';
+import { useColorScheme } from '@/src/components/useColorScheme';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+
 
 export default function TabOneScreen() {
+  const colorScheme = useColorScheme(); // using this hook, we can know if the phone is set to dark or light mode (the app theme is influenced by the phone them, go to the main_layout.tsx to change this)
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <Image 
+        source={{uri: products[0].image}}
+        style={styles.prodImage}
+      />
+      <Text style={[styles.prodName]}>
+        {products[0].name}
+      </Text>
+      <Text style={[styles.priceName]}>${products[1].price}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 30, 
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    padding: 10
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  prodImage: {
+    width: '100%',
+    aspectRatio: 1, // we use this to specify the height of the object depending on its width, we can give it floating point number too
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  prodName: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginVertical: 10,
+  },
+  priceName: {
+    color: Colors.light.tint,
+    fontWeight: 'bold'
   },
 });
