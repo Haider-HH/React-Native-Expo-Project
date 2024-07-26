@@ -1,24 +1,29 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import products from "@/assets/data/products"
-import EditScreenInfo from '@/src/components/EditScreenInfo';
 import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import ProductList from "@/src/components/ProductList"
 
-
-export default function TabOneScreen() {
+export default function MenuScreen() {
   const colorScheme = useColorScheme(); // using this hook, we can know if the phone is set to dark or light mode (the app theme is influenced by the phone them, go to the main_layout.tsx to change this)
   return (
-    <View style={styles.container}>
-      <Image 
-        source={{uri: products[0].image}}
-        style={styles.prodImage}
-      />
-      <Text style={[styles.prodName]}>
-        {products[0].name}
-      </Text>
-      <Text style={[styles.priceName]}>${products[1].price}</Text>
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        {products.map((product) => {
+          return (
+            <ProductList 
+            title={product.name}
+            price={product.price}
+            image={product.image}
+            containerStyling={styles.container}
+            imageStyling={styles.prodImage}
+            titleStyling={styles.prodName}
+            priceStyling={styles.priceName}
+          />
+          )
+        })}
+      </View>
+    </ScrollView>
   );
 }
 
@@ -27,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 30, 
     backgroundColor: 'white',
     overflow: 'hidden',
-    padding: 10
+    padding: 10,
   },
   prodImage: {
     width: '100%',
