@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Colors from '../constants/Colors'
 import { Product } from '../types'
@@ -12,15 +12,17 @@ type ProductListProps = {
 const ProductList: React.FC<ProductListProps> = ({ product }) => {
   return (
     <View style={styles.container}>
-      <Image 
-        source={{uri: product.image || defaultImage}}
-        style={styles.prodImage}
-        resizeMode='contain'
-      />
-      <Text style={styles.prodName}>
-        {product.name}
-      </Text>
-      <Text style={styles.priceName}>${product.price}</Text>
+      <TouchableOpacity activeOpacity={0.7}>
+        <Image 
+          source={{uri: product.image || defaultImage}}
+          style={styles.prodImage}
+          resizeMode='contain'
+        />
+        <Text style={styles.prodName}>
+          {product.name}
+        </Text>
+        <Text style={styles.priceName}>${product.price}</Text>
+      </TouchableOpacity>
     </View>
   )
 }
