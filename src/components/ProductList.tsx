@@ -2,6 +2,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Colors from '../constants/Colors'
 import { Product } from '../types'
+import { Link } from 'expo-router';
 
 export const defaultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'; // we use this just in case we have a missing image from the database
 
@@ -9,10 +10,14 @@ type ProductListProps = {
   product: Product;
 }; //this type is defined in the types.ts file, we use types because it helps us to avoid errors from typos and wrong types passed
 
+
+// I used TouchableOpacity but we can also use Pressable component
+// The "asChild" property passed to the Link component fixes the styling issue of the page
+
 const ProductList: React.FC<ProductListProps> = ({ product }) => {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity activeOpacity={0.7}>
+    <Link href={`/menu/${product.id}`} asChild>
+      <TouchableOpacity activeOpacity={0.7} style={styles.container}>
         <Image 
           source={{uri: product.image || defaultImage}}
           style={styles.prodImage}
@@ -23,7 +28,7 @@ const ProductList: React.FC<ProductListProps> = ({ product }) => {
         </Text>
         <Text style={styles.priceName}>${product.price}</Text>
       </TouchableOpacity>
-    </View>
+    </Link>
   )
 }
 
