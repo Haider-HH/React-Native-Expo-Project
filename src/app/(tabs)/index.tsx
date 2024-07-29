@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import products from "@/assets/data/products"
-import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
 import ProductList from "@/src/components/ProductList"
 
@@ -9,18 +8,12 @@ export default function MenuScreen() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        {products.map((product, i) => {
+        {products.map((product, keyId) => {
           return (
             <ProductList 
-            key={i}
-            title={product.name}
-            price={product.price}
-            image={product.image}
-            containerStyling={styles.container}
-            imageStyling={styles.prodImage}
-            titleStyling={styles.prodName}
-            priceStyling={styles.priceName}
-          />
+              key={keyId}
+              product={product}
+            />
           )
         })}
       </View>
@@ -34,18 +27,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     overflow: 'hidden',
     padding: 10,
-  },
-  prodImage: {
-    width: '100%',
-    aspectRatio: 1, // we use this to specify the height of the object depending on its width, we can give it floating point number too
-  },
-  prodName: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginVertical: 10,
-  },
-  priceName: {
-    color: Colors.light.tint,
-    fontWeight: 'bold'
   },
 });
