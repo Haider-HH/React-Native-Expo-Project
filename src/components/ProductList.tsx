@@ -15,6 +15,7 @@ const ProductList: React.FC<ProductListProps> = ({ product }) => {
       <Image 
         source={{uri: product.image || defaultImage}}
         style={styles.prodImage}
+        resizeMode='contain'
       />
       <Text style={styles.prodName}>
         {product.name}
@@ -28,10 +29,12 @@ export default ProductList
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 30, 
+    borderRadius: 25, 
     backgroundColor: 'white',
     overflow: 'hidden',
     padding: 10,
+    flex: 1, //this flex helped us to view the contents in multiple columns from flatlist component
+    maxWidth: '50%',
   },
   prodImage: {
     width: '100%',
