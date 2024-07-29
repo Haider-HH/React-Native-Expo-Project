@@ -9,9 +9,10 @@ export default function MenuScreen() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        {products.map((product) => {
+        {products.map((product, i) => {
           return (
             <ProductList 
+            key={i}
             title={product.name}
             price={product.price}
             image={product.image}
