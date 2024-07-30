@@ -1,14 +1,18 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import React, { useState } from 'react'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import products from "@/assets/data/products"
 import { Product, PizzaSize } from '@/src/types'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { defaultImage } from "@/src/components/ProductList"
+import Button from '@/src/components/Button'
+
 
 const sizes = ['S', 'M', 'L', 'XL'];
 
 const ProductDetails = () => {
+  // const selectedSize = 'xl';
+  const [selectedSize, setSelectedSize] = useState('S');
   const { id } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
   const product = products.find((p: Product) => p.id.toString() === id)
 
@@ -30,15 +34,19 @@ const ProductDetails = () => {
       <View style={styles.sizesList}>
         {sizes.map((size) => {
           return(
-          <TouchableOpacity activeOpacity={0.7} key={size}>
-              <View style={styles.size}>    
-                <Text style={styles.sizeText}>{size}</Text>
+          <TouchableOpacity activeOpacity={0.5} key={size} onPress={() => setSelectedSize(size)}>
+              <View style={[styles.size, size===selectedSize.toUpperCase() && {backgroundColor: 'gainsboro'}]}>    
+                <Text style={[styles.sizeText, size===selectedSize.toUpperCase() && {color: '#161622'}]}>{size}</Text>
               </View>
             </TouchableOpacity>
           )
         })}
       </View>
       <Text style={ styles.price }>Price: ${product.price}</Text>
+      <Button 
+        text='Add to cart'
+        handlePress= {() => Alert.alert("Item Added Successfully", `Selected Size: ${selectedSize}\nPrice: $${product.price}`)}
+      />
     </View>
   )
 }
@@ -59,6 +67,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginTop: 'auto'
   },
   sizesList: {
     flexDirection: 'row',
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   size: {
-    backgroundColor: 'gainsboro',
+    backgroundColor: 'white',
     width: 50,
     aspectRatio: 1,
     borderRadius: 25,
@@ -75,6 +84,7 @@ const styles = StyleSheet.create({
   },
   sizeText: {
     fontSize: 20,
-    fontWeight: '500'
+    fontWeight: '500',
+    color: 'gray'
   },
 })
