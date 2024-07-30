@@ -11,7 +11,7 @@ export default function MenuScreen() {
       <FlatList 
         data={products}
         renderItem={({item}) => <ProductList product={item} />}
-        numColumns={3}
+        numColumns={2}
         contentContainerStyle={{gap: 10, padding: 10}} //for row styling
         columnWrapperStyle={{gap: 10}} //for column styling
       />
