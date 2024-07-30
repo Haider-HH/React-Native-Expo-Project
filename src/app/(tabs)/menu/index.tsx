@@ -19,11 +19,11 @@ export default function MenuScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 30, 
-    backgroundColor: 'white',
-    overflow: 'hidden',
-    padding: 10,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     borderRadius: 30, 
+//     backgroundColor: 'white',
+//     overflow: 'hidden',
+//     padding: 10,
+//   },
+// });
