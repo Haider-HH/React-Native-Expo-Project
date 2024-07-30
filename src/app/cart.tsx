@@ -1,14 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, Platform } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { useContext } from 'react';
+import { CartContext } from '../providers/cartProvider';
 
 const CartScreen = () => {
+  const cartContext = useContext(CartContext)
+
+  if (!cartContext){
+    return;
+  } //handles the case of the cartContext being undefined
+
+  const { items } = cartContext
+
   return (
     <View>
-      <Text>CartScreen</Text>
+      <Text>Cart items length: {items.length}</Text>
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   )
 }
 
-<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+
 export default CartScreen
