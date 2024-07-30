@@ -22,6 +22,11 @@ const ProductDetails = () => {
     )
   }; //this condition checks if the app found the product or not, if we didn't use this condition then we should use ? with the product when we use it
 
+  const addToCart = () => {
+    if(!product) return;
+    Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
+  }
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
@@ -45,7 +50,7 @@ const ProductDetails = () => {
       <Text style={ styles.price }>Price: ${product.price}</Text>
       <Button 
         text='Add to cart'
-        handlePress= {() => Alert.alert("Item Added Successfully", `Selected Size: ${selectedSize}\nPrice: $${product.price}`)}
+        onPress={addToCart}
       />
     </View>
   )

@@ -1,35 +1,34 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
-import Colors from '../constants/Colors'
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Colors from '../constants/Colors';
+import { forwardRef } from 'react';
 
-interface buttonProps {
-    text: string;
-    handlePress: () => void;
-}
+type ButtonProps = {
+  text: string;
+} & React.ComponentPropsWithoutRef<typeof Pressable>;
 
-const Button: React.FC<buttonProps> = ({ text, handlePress }) => {
-  return (
-    <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
-        <View style={styles.buttonStyling}>
-            <Text style={styles.textStyling}>{text}</Text>
-        </View>
-    </TouchableOpacity>
-  )
-}
-
-export default Button;
+const Button = forwardRef<View | null, ButtonProps>(
+  ({ text, ...pressableProps }, ref) => {
+    return (
+      <Pressable ref={ref} {...pressableProps} style={styles.container}>
+        <Text style={styles.text}>{text}</Text>
+      </Pressable>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
-    buttonStyling: {
-        backgroundColor: Colors.dark.tint,
-        padding: 15,
-        alignItems: 'center',
-        borderRadius: 100,
-        marginVertical: 10,
-    },
-    textStyling: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: 'white',
-    }
-})
+  container: {
+    backgroundColor: Colors.light.tint,
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 100,
+    marginVertical: 10,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+  },
+});
+
+export default Button;
