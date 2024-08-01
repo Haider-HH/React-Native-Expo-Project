@@ -6,13 +6,13 @@ import { Product, PizzaSize } from '@/src/types'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { defaultImage } from "@/src/components/ProductList"
 import Button from '@/src/components/Button'
+import { useCart } from '@/src/providers/cartProvider'
 
-
-const sizes = ['S', 'M', 'L', 'XL'];
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const ProductDetails = () => {
-  // const selectedSize = 'xl';
-  const [selectedSize, setSelectedSize] = useState('S');
+  const { addItem } = useCart();
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('S');
   const { id } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
   const product = products.find((p: Product) => p.id.toString() === id)
 
@@ -25,6 +25,7 @@ const ProductDetails = () => {
   const addToCart = () => {
     if(!product) return;
     Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
+    addItem(product, selectedSize)
   }
 
   return (
