@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import products from "@/assets/data/products"
 import { Product, PizzaSize } from '@/src/types'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -24,8 +24,9 @@ const ProductDetails = () => {
 
   const addToCart = () => {
     if(!product) return;
-    Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
-    addItem(product, selectedSize)
+    // Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
+    addItem(product, selectedSize);
+    router.push('/cart');
   }
 
   return (
