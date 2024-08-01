@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Colors from '../constants/Colors'
 import { Product } from '../types'
-import { Link } from 'expo-router';
+import { Link, useSegments } from 'expo-router';
 
 export const defaultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'; // we use this just in case we have a missing image from the database
 
@@ -15,8 +15,9 @@ type ProductListProps = {
 // The "asChild" property passed to the Link component fixes the styling issue of the page
 
 const ProductList: React.FC<ProductListProps> = ({ product }) => {
+  const segments = useSegments();
   return (
-    <Link href={`/menu/${product.id}`} asChild>
+    <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
       <TouchableOpacity activeOpacity={0.7} style={styles.container}>
         <Image 
           source={{uri: product.image || defaultImage}}
