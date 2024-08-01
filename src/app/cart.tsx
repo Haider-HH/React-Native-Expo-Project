@@ -32,7 +32,6 @@ const CartScreen = () => {
         </Text>
         <Button text="Checkout" onPress={() => Alert.alert('Checkout', "Order Completed Successfully :)")}/>
       </> 
-      
       : 
       <View>
         <Entypo 
