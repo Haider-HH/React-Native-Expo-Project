@@ -21,6 +21,14 @@ const index = () => {
       <Link href={'/(admin)'} asChild>
         <Button text="Admin" />
       </Link>
+      <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+        <Link href={'/sign-in'} asChild>
+          <Button text="Sign In" />
+        </Link>
+        <Link href={'/sign-up'} asChild>
+          <Button text="Sign Up" />
+        </Link>
+      </View>
     </View>
   );
 };
