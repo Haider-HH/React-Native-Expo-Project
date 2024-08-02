@@ -1,17 +1,22 @@
-import { View, Text, StyleSheet, TextInput, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Pressable, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/src/components/Button';
 import { defaultImage } from '@/src/components/ProductList';
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import products from '@/assets/data/products';
+import { Product } from '@/src/types';
 
-const CreateProductScreen = () => {
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState("");
+const CreateProductScreen = () => {    
+    const { id } = useLocalSearchParams();
+    const product = products.find((p: Product) => p.id.toString() === id)
+    const isUpdating = !!id; //if id is defined, then we are updating the product and not creating it
+    const [name, setName] = useState(!isUpdating? "" : product?.name);
+    const [price, setPrice] = useState(!isUpdating? "" : product?.price.toString());
     const [error, setError] = useState('');
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<string>(!isUpdating? defaultImage : product?.image || defaultImage); // if we have a product
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,18 +58,53 @@ const CreateProductScreen = () => {
             return;
         }
         // submit to the database
+        resetFields();
+    }
+    const onUpdate = () => {
+        if(!validateInput()) {
+            return;
+        }
+        // submit to the database
         resetFields()
     }
+
+    const onSubmit = () => {
+        if (isUpdating) {
+            //update the product
+            onUpdate();
+        }
+        else {
+            //create the product
+            onCreate();
+        }
+    }
+
+    const onDelete = () => {
+        console.warn('Deleted')
+    }
+
+    const confirmDelete = () => {
+        Alert.alert("Confirm", "Do you want to delete this product?", [
+            {
+                text: 'cancel',
+            },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: onDelete,
+            }
+        ])
+    } //this function is called when we want to delete the product (as admins), and it asks for confirmation to avoid accidental delete
     return (
         <View style={styles.container}>
-            <Stack.Screen options={{title: 'Create Product'}}/>
+            <Stack.Screen options={{title: !isUpdating? 'Create Product' : 'Update Product'}}/>
             <Image 
-                source={{uri: image || defaultImage}}
+                source={{uri: image}}
                 style={styles.imageStyling}
             />
             <View style={[{flexDirection: 'row', alignSelf: 'center'}]}>
                 <Text onPress={pickImage} style={styles.imageSelection}>Select Image</Text>
-                <Pressable onPress={() => setImage('')}>
+                <Pressable onPress={() => setImage(defaultImage)}>
                     {({ pressed }) => (
                     <FontAwesome
                         name="trash"
@@ -77,26 +117,31 @@ const CreateProductScreen = () => {
             </View>
             <Text style={styles.label}>Name</Text>
             <TextInput 
-                placeholder='name'
+                placeholder={!isUpdating ? 'name' : product?.name}
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholderTextColor={'gainsboro'}
+                placeholderTextColor={'#BDBDBD'}
             />
             <Text style={styles.label}>Price ($)</Text>
             <TextInput 
-                placeholder='9.99'
+                placeholder={!isUpdating ? '9.99' : product?.price.toString()}
                 style={styles.input}
                 keyboardType='numeric'
                 value={price}
                 onChangeText={setPrice}
-                placeholderTextColor={'gainsboro'}
+                placeholderTextColor={'#BDBDBD'}
             />
             <Text style={{color: 'red'}}>{'\t' + error}</Text>
             <Button 
-                text="Create"
-                onPress={onCreate}
+                text={ !isUpdating? "Create" : "Update"}
+                onPress={onSubmit}
             />
+            {isUpdating && (
+                <Text style={styles.imageSelection} onPress={confirmDelete}>
+                    Delete Product
+                </Text>
+            )}
 
         </View>
     )
