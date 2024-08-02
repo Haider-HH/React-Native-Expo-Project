@@ -4,12 +4,13 @@ import { forwardRef } from 'react';
 
 type ButtonProps = {
   text: string;
+  buttonColor?: string; //the question mark make this prop optional
 } & React.ComponentPropsWithoutRef<typeof Pressable>;
 
 const Button = forwardRef<View | null, ButtonProps>(
-  ({ text, ...pressableProps }, ref) => {
+  ({ text, buttonColor = '', ...pressableProps }, ref) => {
     return (
-      <Pressable ref={ref} {...pressableProps} style={styles.container}>
+      <Pressable ref={ref} {...pressableProps} style={[styles.container, buttonColor.length > 0  && {backgroundColor: buttonColor}]}>
         <Text style={styles.text}>{text}</Text>
       </Pressable>
     );

@@ -11,7 +11,7 @@ import { Product } from '@/src/types';
 
 const CreateProductScreen = () => {    
     const { id } = useLocalSearchParams();
-    const product = products.find((p: Product) => p.id.toString() === id)
+    const product = products.find((p: Product) => p.id.toString() === id) // find the specific product to use its details as default values in the update page
     const isUpdating = !!id; //if id is defined, then we are updating the product and not creating it
     const [name, setName] = useState(!isUpdating? "" : product?.name);
     const [price, setPrice] = useState(!isUpdating? "" : product?.price.toString());
@@ -138,9 +138,11 @@ const CreateProductScreen = () => {
                 onPress={onSubmit}
             />
             {isUpdating && (
-                <Text style={styles.imageSelection} onPress={confirmDelete}>
-                    Delete Product
-                </Text>
+                <Button 
+                    text= 'Delete'
+                    onPress={confirmDelete}
+                    buttonColor='#D32F2F'
+                />
             )}
 
         </View>
