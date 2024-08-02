@@ -1,7 +1,5 @@
-import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
+import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useState } from 'react'
-import { defaultImage } from '@/src/components/ProductList';
-import { FontAwesome } from '@expo/vector-icons';
 import { Link, router, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
