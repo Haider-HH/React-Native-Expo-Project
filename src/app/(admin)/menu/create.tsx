@@ -32,7 +32,7 @@ const CreateProductScreen = () => {
 
     const resetFields = () => {
         // Save in database (later)
-        setImage('');
+        setImage(defaultImage);
         setName('');
         setPrice('');
     }
