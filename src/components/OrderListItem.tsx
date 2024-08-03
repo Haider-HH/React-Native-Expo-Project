@@ -1,18 +1,17 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react';
-import { Order, OrderItem } from '../types';
+import { Order } from '../types';
 import { Link, useSegments } from 'expo-router';
-import { defaultImage } from './ProductList';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
+
 type OrderListItemProps = {
     order: Order;
-    index: number;
 };
 
 dayjs.extend(relativeTime)
 
-const OrderListItem: React.FC<OrderListItemProps> = ({ order, index }) => {
+const OrderListItem: React.FC<OrderListItemProps> = ({ order }) => {
   const segments = useSegments();
   return (
     <Link href={`/${segments[0]}/orders/${order.id}`} asChild>
