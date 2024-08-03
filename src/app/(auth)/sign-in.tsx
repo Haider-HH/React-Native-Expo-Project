@@ -8,21 +8,20 @@ import Button from '@/src/components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
 
 const SignIn = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [form, setForm] = useState({email: '', password: ''})
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
 
     const validateInput = () => {
-        if (!email) {
+        if (!form.email) {
             setError('Email is required')
             return false;
         }
-        if (!password) {
+        if (!form.password) {
             setError('Password is required')
             return false;
         }
-        if (password.length > 0 && password.length < 8) {
+        if (form.password.length > 0 && form.password.length < 8) {
             setError('Password should be atleast 8 characters long')
             return false;
         }
@@ -30,10 +29,12 @@ const SignIn = () => {
     }
     
     const onSubmit = () => {
-        if (!validateInput) {
+        if (!validateInput()) {
             return;
         }
         else {
+            setForm({email: '', password: ''})
+            setError('')
             router.push('/(user)')
         }
     }
@@ -45,8 +46,8 @@ const SignIn = () => {
                 <TextInput 
                     placeholder='Enter Email...'
                     style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
+                    value={form.email}
+                    onChangeText={(e) => setForm({...form, email: e})}
                     placeholderTextColor={'#BDBDBD'}
                     keyboardType='email-address'
                 />
@@ -55,8 +56,8 @@ const SignIn = () => {
                     <TextInput 
                         placeholder='Enter Password...'
                         style={styles.input}
-                        value={password}
-                        onChangeText={setPassword}
+                        value={form.password}
+                        onChangeText={(e) => setForm({...form, password: e})}
                         placeholderTextColor={'#BDBDBD'}
                         secureTextEntry = {!showPassword}
                         maxLength={48}

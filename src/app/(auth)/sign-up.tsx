@@ -6,21 +6,20 @@ import Button from '@/src/components/Button';
 import { Entypo } from '@expo/vector-icons';
 
 const SignUp = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [form, setForm] = useState({email: '', password: ''})
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
 
     const validateInput = () => {
-        if (!email) {
+        if (!form.email) {
             setError('Email is required')
             return false;
         }
-        if (!password) {
+        if (!form.password) {
             setError('Password is required')
             return false;
         }
-        if (password.length > 0 && password.length < 8) {
+        if (form.password.length > 0 && form.password.length < 8) {
             setError('Password should be atleast 8 characters long')
             return false;
         }
@@ -28,11 +27,13 @@ const SignUp = () => {
     }
     
     const onSubmit = () => {
-        if (!validateInput) {
+        if (!validateInput()) {
             return;
         }
         else {
-            router.push('/')
+            setForm({email: '', password: ''})
+            setError('')
+            router.push('/(user)')
         }
     }
 
@@ -43,8 +44,8 @@ const SignUp = () => {
                 <TextInput 
                     placeholder='example@gmail.com'
                     style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
+                    value={form.email}
+                    onChangeText={(e) => setForm({...form, email: e})}
                     placeholderTextColor={'#BDBDBD'}
                     keyboardType='email-address'
                 />
@@ -53,8 +54,8 @@ const SignUp = () => {
                     <TextInput 
                         placeholder='H#ODh1jn42@##$'
                         style={styles.input}
-                        value={password}
-                        onChangeText={setPassword}
+                        value={form.password}
+                        onChangeText={(e) => setForm({...form, password: e})}
                         placeholderTextColor={'#BDBDBD'}
                         secureTextEntry = {!showPassword}
                         maxLength={48}
@@ -69,6 +70,7 @@ const SignUp = () => {
                         )}
                     </Pressable>
                 </View>
+                <Text style={{color: 'red'}}>{'\t' + error}</Text>
                 <Button 
                     text= 'Create account'
                     onPress={onSubmit}
