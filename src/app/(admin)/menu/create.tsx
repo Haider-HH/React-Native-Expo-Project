@@ -51,7 +51,6 @@ const CreateProductScreen = () => {
             return false;
         }
         return true;
-
     }
     const onCreate = () => {
         if(!validateInput()) {
