@@ -13,9 +13,6 @@ type CartListItemProps = {
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
     const { updateQuantity } = useCart();
-    if (cartItem.quantity < 0) {
-        cartItem.quantity = 0;
-    };
     return (
         <View style={styles.container}>
             <Image 
