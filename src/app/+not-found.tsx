@@ -3,6 +3,9 @@ import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/src/components/Themed';
 
+
+// this file comes with the project when its created. it renders if the application can't find a specific screen, so it gives the user an option to return to the main screen
+
 export default function NotFoundScreen() {
   return (
     <>

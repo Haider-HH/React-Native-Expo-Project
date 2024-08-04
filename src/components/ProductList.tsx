@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   },
   priceName: {
     color: Colors.light.tint,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 'auto'
   },
 });

@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/src/components/useColorScheme';
 import CartProvider from '../providers/cartProvider';
 
+// Layout files in a directory are used to define shared UI elements such as headers, tab bars so that they persist between different routes. (this applies for _layout.tsx files in the project)
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

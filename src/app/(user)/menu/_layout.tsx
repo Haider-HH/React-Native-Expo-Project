@@ -3,6 +3,8 @@ import { Link, Stack } from "expo-router";
 import { Pressable } from "react-native";
 import Colors from "@/src/constants/Colors";
 
+//this layout file renders the stack screen and the icons of the Menu (index.tsx) and the product details ([id].tsx file)
+
 export default function MenuStack (){
     return (
       <Stack>
@@ -20,7 +22,7 @@ export default function MenuStack (){
                       name="shopping-cart"
                       size={25}
                       color={Colors.light.tint}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1}}
+                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                     />
                   )}
                 </Pressable>

@@ -1,17 +1,17 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import products from "@/assets/data/products"
 import { Product, PizzaSize } from '@/src/types'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { defaultImage } from "@/src/components/ProductList"
 import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/cartProvider'
 
-const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // specifying the type to PizzaSize[] restricts this variable to accept only one of these 4 strings (see types.ts)
 
 const ProductDetails = () => {
-  const { addItem } = useCart();
+
+  const { addItem } = useCart(); // access and manage the cart using this function provided by context provider instead of using props
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('S');
   const { id } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
   const product = products.find((p: Product) => p.id.toString() === id)

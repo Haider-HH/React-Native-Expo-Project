@@ -1,9 +1,11 @@
 import { View } from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import Button from '../components/Button';
 import { Link, Stack } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useFocusEffect } from '@react-navigation/native';
+
+// This file renders the home screen (the screen that renders at the start of the application)
 
 const index = () => {
   useFocusEffect(
@@ -11,7 +13,8 @@ const index = () => {
       // Reset the navigation bar color to its default color
       NavigationBar.setBackgroundColorAsync('white');
     }, [])
-  );
+  ); // When used (useEffect), it didn't work properly
+  
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
       <Stack.Screen options={{title: "Home"}}/>

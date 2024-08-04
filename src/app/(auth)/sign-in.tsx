@@ -13,6 +13,11 @@ const SignIn = () => {
     const [error, setError] = useState('');
 
     const validateInput = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(form.email)) {
+            setError('Invalid email address');
+            return false;
+        }
         if (!form.email) {
             setError('Email is required')
             return false;
@@ -39,6 +44,16 @@ const SignIn = () => {
         }
     }
 
+    const handlePasswordChange = (text: string) => {
+        // Filter out characters with ASCII values outside the range 32 to 126
+        const filteredText = text.split('').filter(char => {
+          const asciiValue = char.charCodeAt(0);
+          return asciiValue >= 32 && asciiValue <= 126;
+        }).join('');
+    
+        setForm({ ...form, password: filteredText });
+      };
+
     return (
             <View style={styles.container}>
                 <Stack.Screen options={{title: 'Sign in'}}/>
@@ -57,7 +72,7 @@ const SignIn = () => {
                         placeholder='Enter Password...'
                         style={styles.input}
                         value={form.password}
-                        onChangeText={(e) => setForm({...form, password: e})}
+                        onChangeText={handlePasswordChange}
                         placeholderTextColor={'#BDBDBD'}
                         secureTextEntry = {!showPassword}
                         maxLength={48}
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderColor: '#9E9E9E',
         borderWidth: 1.5,
-        width: '100%'
+        width: '100%',
     },
     creatAccount: {
         alignSelf: 'center', 

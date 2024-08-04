@@ -6,4 +6,4 @@ export default function TabIndex () {
     )
 }
 
-//This file was created just to redirect us to the menu page, because when the app is first loaded or refreshed, it will look for index.tsx in the (tabs) folder
+//This file was created just to redirect us to the menu page, because when the app is first loaded or refreshed, it will look for index.tsx in the (user) folder

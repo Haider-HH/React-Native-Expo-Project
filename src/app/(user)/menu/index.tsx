@@ -1,11 +1,12 @@
-import { ScrollView, StyleSheet, View, FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import products from "@/assets/data/products"
-import { useColorScheme } from '@/src/components/useColorScheme';
 import ProductList from "@/src/components/ProductList";
-import { SafeAreaView } from 'react-native-safe-area-context';
+
+// this file renders the available products to the user (renders every product as a ProductList.tsx component)
+
+// the FlatList component allows us to render a list of items both horizontally and vertically
 
 export default function MenuScreen() {
-  const colorScheme = useColorScheme(); // using this hook, we can know if the phone is set to dark or light mode (the app theme is influenced by the phone them, go to the main_layout.tsx to change this)
   return (
     <View>
       <FlatList 
@@ -18,12 +19,3 @@ export default function MenuScreen() {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     borderRadius: 30, 
-//     backgroundColor: 'white',
-//     overflow: 'hidden',
-//     padding: 10,
-//   },
-// });

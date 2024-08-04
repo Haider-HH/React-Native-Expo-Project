@@ -5,11 +5,14 @@ import { useCart } from '../providers/cartProvider';
 import CartListItem from '../components/CartListItem';
 import Button from '../components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
+
+
+// this file renders the cart screen (shows the details of the current order [this screen is for the user only])
 
 const CartScreen = () => {
 
-  const { items, total } = useCart(); 
+  const { items, total } = useCart(); // it uses context instead of props to avoid something called "props drilling"
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, padding: 10}}>
@@ -43,7 +46,7 @@ const CartScreen = () => {
         <Text style={{marginRight: 'auto', marginLeft: 'auto', marginTop: 10, fontSize: 20, fontWeight: 'bold'}}>The Cart is Empty</Text>
         <Button 
           text='Back To Menu'
-          onPress={() => router.push('/menu/')}  
+          onPress={() => router.push('/(user)/menu/')}  
         />
       </View>
       }

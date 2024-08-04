@@ -11,8 +11,14 @@ const SignUp = () => {
     const [error, setError] = useState('');
 
     const validateInput = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!form.email) {
             setError('Email is required')
+            return false;
+        }
+        if (!emailPattern.test(form.email)) {
+            setError('Invalid email address');
             return false;
         }
         if (!form.password) {
@@ -35,7 +41,17 @@ const SignUp = () => {
             setError('')
             router.push('/(user)')
         }
-    }
+    };
+
+    const handlePasswordChange = (text: string) => {
+        // Filter out characters with ASCII values outside the range 32 to 126
+        const filteredText = text.split('').filter(char => {
+          const asciiValue = char.charCodeAt(0);
+          return asciiValue >= 32 && asciiValue <= 126;
+        }).join('');
+    
+        setForm({ ...form, password: filteredText });
+      };
 
     return (
             <View style={styles.container}>
@@ -55,7 +71,7 @@ const SignUp = () => {
                         placeholder='H#ODh1jn42@##$'
                         style={styles.input}
                         value={form.password}
-                        onChangeText={(e) => setForm({...form, password: e})}
+                        onChangeText={handlePasswordChange}
                         placeholderTextColor={'#BDBDBD'}
                         secureTextEntry = {!showPassword}
                         maxLength={48}

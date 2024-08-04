@@ -6,6 +6,7 @@ import { Link } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { useCart } from '../providers/cartProvider';
 import { defaultImage } from './ProductList';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
 
 type CartListItemProps = {
     cartItem: CartItem;
@@ -34,20 +35,32 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
                 </View>
             </View>
             <View style={styles.quantitySelector}>
-                <FontAwesome
-                onPress={() => updateQuantity(cartItem.id, -1)}
-                name="minus"
-                color="gray"
-                size={15}
-                style={{ padding: 5 }}
-                />
-
+                {cartItem.quantity == 1 ? (
+                  <EvilIcons 
+                    name="trash"
+                    size={22}
+                    color='black'
+                    style={{paddingBottom: 3}}
+                    onPress={() => updateQuantity(cartItem.id, -1)}
+                  />
+                )
+                :
+                (
+                  <FontAwesome
+                    onPress={() => updateQuantity(cartItem.id, -1)}
+                    name="minus"
+                    color="black"
+                    size={15}
+                    style={{ padding: 5 }}
+                  />
+                )
+                }
                 <Text style={styles.quantity}>{cartItem.quantity}</Text>
                 <FontAwesome
                 onPress={() => updateQuantity(cartItem.id, 1)}
                 name="plus"
                 size={15}
-                color="gray"
+                color="black"
                 style={{ padding: 5 }}
                 />
             </View>

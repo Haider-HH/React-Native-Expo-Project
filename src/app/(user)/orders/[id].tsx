@@ -12,6 +12,8 @@ import Button from '@/src/components/Button';
 
 dayjs.extend(relativeTime);
 
+// this file renders the details of a specific order when selected from the orders menu (that is rendered by the index.tsx in the orders folder)
+
 const OrderDetails = () => {
     const { id } = useLocalSearchParams();
     const order = orders.find((o: Order) => o.id.toString() === id);
@@ -26,7 +28,7 @@ const OrderDetails = () => {
                 />
             </View>
         );
-    }
+    } // we need to check if order exists so we can avoid the problem of it being undefined
 
     return (
         <View style={styles.container}>
@@ -49,6 +51,8 @@ const OrderDetails = () => {
     );
 };
 
+export default OrderDetails;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -64,4 +68,3 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OrderDetails;

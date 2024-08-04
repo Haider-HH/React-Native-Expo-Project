@@ -36,48 +36,66 @@ const CreateProductScreen = () => {
         setName('');
         setPrice('');
     }
-    const validateInput = () => {
-        setError('')
-        if(!name) {
-            setError('Name is Required')
+
+    const showNoImageAlert = () => {
+        return new Promise((resolve) => {
+            Alert.alert("Notice", "The product has no image", [
+                {
+                    text: 'cancel',
+                    onPress: () => {
+                        setError("Please Upload a Product Image");
+                        resolve(false);
+                    }
+                },
+                {
+                    text: 'ignore',
+                    onPress: () => resolve(true),
+                }
+            ]);
+        });
+    }
+
+    const validateInput = async () => {
+        setError('');
+        if (image === defaultImage) {
+            const proceed = await showNoImageAlert();
+            if (!proceed) return false;
+        }
+        if (!name) {
+            setError('Name is Required');
             return false;
         }
-        if(!price) {
-            setError("Price is Required")
+        if (!price) {
+            setError("Price is Required");
             return false;
         }
-        if(isNaN(parseFloat(price))) {
-            setError('Price is not a number')
+        if (isNaN(parseFloat(price))) {
+            setError('Price is not a number');
             return false;
         }
         return true;
     }
+
     const onCreate = () => {
-        if(!validateInput()) {
-            return;
-        }
         // submit to the database
         resetFields();
     }
+
     const onUpdate = () => {
-        if(!validateInput()) {
-            return;
-        }
         // submit to the database
-        resetFields()
+        resetFields();
     }
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
+        const isValid = await validateInput();
+        if (!isValid) return;
+
         if (isUpdating) {
-            //update the product
             onUpdate();
-        }
-        else {
-            //create the product
+        } else {
             onCreate();
         }
     }
-
     const onDelete = () => {
         console.warn('Deleted')
     }
@@ -103,13 +121,31 @@ const CreateProductScreen = () => {
             />
             <View style={[{flexDirection: 'row', alignSelf: 'center'}]}>
                 <Text onPress={pickImage} style={styles.imageSelection}>Select Image</Text>
-                <Pressable onPress={() => setImage(defaultImage)}>
+                <Pressable onPress={() => {
+                    setImage(defaultImage)
+                    setName('')
+                    setPrice('')
+                    }}>
                     {({ pressed }) => (
                     <FontAwesome
                         name="trash"
                         size={25}
                         color={Colors.light.tint}
                         style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 50 }}
+                    />
+                    )}
+                </Pressable>
+                <Pressable onPress={() => {
+                    setImage(product?.image || defaultImage)
+                    setName(product?.name)
+                    setPrice(product?.price.toString())
+                    }}>
+                    {({ pressed }) => (
+                    <FontAwesome
+                        name="undo"
+                        size={25}
+                        color={Colors.light.tint}
+                        style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 80}}
                     />
                     )}
                 </Pressable>

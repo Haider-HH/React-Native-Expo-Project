@@ -4,6 +4,9 @@ import React from "react";
 import OrderListItem from "@/src/components/OrderListItem"
 import { Stack } from 'expo-router';
 
+// this file renders a list of orders (as a OrderListItem component) that belong to the user 
+// If you are reading this before implementing the backend, then you should know that this file renders hard coded data from a file called (orders.ts)
+
 export default function OrderScreen() {
   return (
     <View>
