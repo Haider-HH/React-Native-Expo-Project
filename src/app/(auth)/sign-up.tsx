@@ -1,47 +1,63 @@
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { Link, router, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
 import { Entypo } from '@expo/vector-icons';
+import { supabase } from '@/src/lib/supabase';
 
 const SignUp = () => {
-    const [form, setForm] = useState({email: '', password: ''})
+    const [form, setForm] = useState({email: '', password: ''});
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const validateInput = () => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // this function connects the backend with the frontend.
+    const signUpWithEmail = async () => {
+        setLoading(true);
+        const { error } = await supabase.auth.signUp({
+            email: form.email,
+            password: form.password
+        });
 
-        if (!form.email) {
-            setError('Email is required')
-            return false;
+        if (error) {
+            Alert.alert("Error", error.message)
         }
-        if (!emailPattern.test(form.email)) {
-            setError('Invalid email address');
-            return false;
-        }
-        if (!form.password) {
-            setError('Password is required')
-            return false;
-        }
-        if (form.password.length > 0 && form.password.length < 8) {
-            setError('Password should be atleast 8 characters long')
-            return false;
-        }
-        return true;
+        setLoading(false);
     }
+    // the validateInput and onSubmit has no use for now (4/8/2024)
+    // const validateInput = () => {
+    //     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    //     if (!form.email) {
+    //         setError('Email is required')
+    //         return false;
+    //     }
+    //     if (!emailPattern.test(form.email)) {
+    //         setError('Invalid email address');
+    //         return false;
+    //     }
+    //     if (!form.password) {
+    //         setError('Password is required')
+    //         return false;
+    //     }
+    //     if (form.password.length > 0 && form.password.length < 8) {
+    //         setError('Password should be atleast 8 characters long')
+    //         return false;
+    //     }
+    //     return true;
+    // }
     
-    const onSubmit = () => {
-        if (!validateInput()) {
-            return;
-        }
-        else {
-            setForm({email: '', password: ''})
-            setError('')
-            router.push('/(user)')
-        }
-    };
+    // const onSubmit = () => {
+    //     if (!validateInput()) {
+    //         return;
+    //     }
+    //     else {
+    //         setForm({email: '', password: ''})
+    //         setError('')
+    //         router.push('/(user)')
+    //     }
+    // };
 
     const handlePasswordChange = (text: string) => {
         // Filter out characters with ASCII values outside the range 32 to 126
@@ -88,8 +104,9 @@ const SignUp = () => {
                 </View>
                 <Text style={{color: 'red'}}>{'\t' + error}</Text>
                 <Button 
-                    text= 'Create account'
-                    onPress={onSubmit}
+                    text= {!loading? 'Create account' : 'Creating account...'}
+                    onPress={signUpWithEmail}
+                    disabled={loading}
                 />
                 <Link href="/sign-in" style={styles.creatAccount}>Sign in</Link>
             </View>

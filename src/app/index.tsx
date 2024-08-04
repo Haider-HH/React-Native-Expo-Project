@@ -1,13 +1,25 @@
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import React from 'react';
 import Button from '../components/Button';
-import { Link, Stack } from 'expo-router';
+import { Link, Redirect, Stack } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../providers/AuthProvider';
+import { supabase } from '../lib/supabase';
 
 // This file renders the home screen (the screen that renders at the start of the application)
 
 const index = () => {
+  const { session, loading } = useAuth();
+  console.log(loading);
+  console.log(session)
+  if (loading) {
+    return <ActivityIndicator />
+  }
+  if(!session) {
+    return <Redirect href={'/sign-in'} />
+  }
+
   useFocusEffect(
     React.useCallback(() => {
       // Reset the navigation bar color to its default color
@@ -32,6 +44,10 @@ const index = () => {
           <Button text="Sign Up" />
         </Link>
       </View>
+      <Button 
+        text={session ? 'Sign Out' : 'Signed Out'} 
+        onPress={() => supabase.auth.signOut()}
+      />
     </View>
   );
 };
