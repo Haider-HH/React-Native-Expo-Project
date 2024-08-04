@@ -135,7 +135,7 @@ const CreateProductScreen = () => {
                     />
                     )}
                 </Pressable>
-                <Pressable onPress={() => {
+                {isUpdating && <Pressable onPress={() => {
                     setImage(product?.image || defaultImage)
                     setName(product?.name)
                     setPrice(product?.price.toString())
@@ -148,7 +148,7 @@ const CreateProductScreen = () => {
                         style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 80}}
                     />
                     )}
-                </Pressable>
+                </Pressable>}
             </View>
             <Text style={styles.label}>Name</Text>
             <TextInput 
@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
         marginVertical: 10,
     },
-    imageStyling: {width: '50%', 
+    imageStyling: {
+        width: '50%', 
         aspectRatio: 1, 
         alignSelf: 'center',
     }

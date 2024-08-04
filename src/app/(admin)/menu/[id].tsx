@@ -1,11 +1,9 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import { Link, router, Stack, useLocalSearchParams } from 'expo-router'
 import products from "@/assets/data/products"
 import { Product, PizzaSize } from '@/src/types'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { defaultImage } from "@/src/components/ProductList"
-import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/cartProvider'
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from "@/src/constants/Colors"
