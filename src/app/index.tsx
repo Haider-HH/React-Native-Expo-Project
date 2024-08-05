@@ -9,47 +9,41 @@ import { supabase } from '../lib/supabase';
 
 // This file renders the home screen (the screen that renders at the start of the application)
 
-const index = () => {
+const Index = () => {
   const { session, loading } = useAuth();
-  console.log(loading);
-  console.log(session)
+
+  React.useEffect(() => {
+    NavigationBar.setBackgroundColorAsync('white');
+  }, []);
+
   if (loading) {
-    return <ActivityIndicator />
-  }
-  if(!session) {
-    return <Redirect href={'/sign-in'} />
+    return <ActivityIndicator />;
   }
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // Reset the navigation bar color to its default color
-      NavigationBar.setBackgroundColorAsync('white');
-    }, [])
-  ); // When used (useEffect), it didn't work properly
-  
+  if (!session) {
+    return <Redirect href="/sign-in" />;
+  }
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-      <Stack.Screen options={{title: "Home"}}/>
-      <Link href={'/(user)'} asChild>
-        <Button text="User" />
-      </Link>
-      <Link href={'/(admin)'} asChild>
-        <Button text="Admin" />
-      </Link>
-      <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-        <Link href={'/sign-in'} asChild>
-          <Button text="Sign In" />
+      <Stack.Screen options={{ title: 'Home' }} />
+        <Link href="/(user)" asChild>
+          <Button text="User" />
         </Link>
-        <Link href={'/sign-up'} asChild>
-          <Button text="Sign Up" />
+        <Link href="/(admin)" asChild>
+          <Button text="Admin" />
         </Link>
-      </View>
-      <Button 
-        text={session ? 'Sign Out' : 'Signed Out'} 
-        onPress={() => supabase.auth.signOut()}
-      />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+          <Link href="/sign-in" asChild>
+            <Button text="Sign In" />
+          </Link>
+          <Link href="/sign-up" asChild>
+            <Button text="Sign Up" />
+          </Link>
+        </View>
+        <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
     </View>
   );
 };
 
-export default index;
+export default Index;

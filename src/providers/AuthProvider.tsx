@@ -21,9 +21,12 @@ const AuthProvider = ({children}: PropsWithChildren) => {
             const {data} = await supabase.auth.getSession();
             setSession(data.session);
             setLoading(false)
-        }
-        fetchSession()
-    }, [])
+        };
+        fetchSession();
+        supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+    }, []);
 
     return (
         <AuthContext.Provider value={{session, loading}}>

@@ -14,10 +14,6 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  useEffect(() => {
-    // Change the navigation bar color to match your tab bar color
-    NavigationBar.setBackgroundColorAsync(Colors.light.tint);
-  }, []);
   return (
     <Tabs
       screenOptions={{
