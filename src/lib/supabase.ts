@@ -1,6 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import * as SecureStore from 'expo-secure-store';
 import { createClient } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -19,9 +20,16 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: ExpoSecureStoreAdapter as any,
+    storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
   },
 });
+
+// Using ExpoSecureStoreAdapter in the storage part was resulting in a warning that says: 
+/* 
+    "WARN  Value being stored in SecureStore 
+    is larger than 2048 bytes and it may not be stored successfully. 
+    In a future SDK version, this call may throw an error." 
+*/

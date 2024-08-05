@@ -10,11 +10,8 @@ import { supabase } from '../lib/supabase';
 // This file renders the home screen (the screen that renders at the start of the application)
 
 const Index = () => {
-  const { session, loading } = useAuth();
-
-  React.useEffect(() => {
-    NavigationBar.setBackgroundColorAsync('white');
-  }, []);
+  const { session, loading, isAdmin } = useAuth();
+  
 
   if (loading) {
     return <ActivityIndicator />;
@@ -23,6 +20,10 @@ const Index = () => {
   if (!session) {
     return <Redirect href="/sign-in" />;
   }
+
+  if (!isAdmin) {
+    return <Redirect href={'/(user)'}/>
+  } // the user can't go to the index page and switch to an admin
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
@@ -34,12 +35,6 @@ const Index = () => {
           <Button text="Admin" />
         </Link>
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          <Link href="/sign-in" asChild>
-            <Button text="Sign In" />
-          </Link>
-          <Link href="/sign-up" asChild>
-            <Button text="Sign Up" />
-          </Link>
         </View>
         <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
     </View>
