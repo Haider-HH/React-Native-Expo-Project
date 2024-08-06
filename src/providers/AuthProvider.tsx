@@ -2,13 +2,22 @@ import { createContext, PropsWithChildren, useContext, useEffect, useState } fro
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 
-type AuthData = {
-    session: Session | null;
-    profile: any;
-    loading: boolean;
-    isAdmin: boolean
+type Profile = {
+    id: string;
+    group: string;
+    avatar_url: string | null;
+    full_name: string | null;
+    updated_at: string | null;
+    username: string | null;
+    website: string | null;
 };
 
+type AuthData = {
+    session: Session | null;
+    profile: Profile | null;
+    loading: boolean;
+    isAdmin: boolean;
+};
 const AuthContext = createContext<AuthData>({
     session: null,
     loading: true,
@@ -18,7 +27,7 @@ const AuthContext = createContext<AuthData>({
 
 const AuthProvider = ({children}: PropsWithChildren) => {
     const [session, setSession] = useState<Session | null>(null);
-    const [profile, setProfile] = useState(null)
+    const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -51,4 +60,4 @@ const AuthProvider = ({children}: PropsWithChildren) => {
 };
 
 export default AuthProvider;
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
