@@ -1,33 +1,41 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { Link, router, Stack, useLocalSearchParams } from 'expo-router'
-import products from "@/assets/data/products"
-import { Product, PizzaSize } from '@/src/types'
+import { PizzaSize } from '@/src/types'
 import { defaultImage } from "@/src/components/ProductList"
 import { useCart } from '@/src/providers/cartProvider'
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from "@/src/constants/Colors"
+import { useProduct } from '@/src/api'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const ProductDetails = () => {
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('S');
-  const { id } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
-  const product = products.find((p: Product) => p.id.toString() === id)
+  const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
 
-  if(!product){
+  if (!idString) {
+    return <Text>Incorrect ID</Text>
+  }
+
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+
+  const {data: product, error, isLoading} = useProduct(id);
+
+  if (isLoading) {
+    return <ActivityIndicator />
+  }
+
+  if(error){
     return (
-      <Text>Product Not Found 🙁</Text>
+      <>
+        <Text>Failed to fetch product</Text>
+        <Text>{error.message}</Text>
+      </>
     )
   }; //this condition checks if the app found the product or not, if we didn't use this condition then we should use ? with the product when we use it
-
-  const addToCart = () => {
-    if(!product) return;
-    // Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
-    addItem(product, selectedSize);
-    router.push('/cart');
-  }
+     // UPDATE: this condition now checks for the existence of error caused by reading a product by its id, so the ? mark is now used with product below
 
   return (
     <View style={styles.container}>
@@ -53,14 +61,14 @@ const ProductDetails = () => {
           }
         } 
       />
-      <Stack.Screen options={{ title: product.name }} />
+      <Stack.Screen options={{ title: product?.name }} />
       <Image 
-        source={{ uri: product.image || defaultImage}}
+        source={{ uri: product?.image || defaultImage}}
         style={styles.image}
         resizeMode='contain'
       />
-      <Text style={ styles.title }>{product.name}</Text>
-      <Text style={ styles.price }>Price: ${product.price}</Text>
+      <Text style={ styles.title }>{product?.name}</Text>
+      <Text style={ styles.price }>Price: ${product?.price}</Text>
     </View>
   )
 }

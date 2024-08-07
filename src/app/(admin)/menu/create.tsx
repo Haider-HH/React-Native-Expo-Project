@@ -1,22 +1,51 @@
-import { View, Text, StyleSheet, TextInput, Image, Pressable, Alert } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Image, Pressable, Alert, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Button from '@/src/components/Button';
 import { defaultImage } from '@/src/components/ProductList';
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import products from '@/assets/data/products';
-import { Product } from '@/src/types';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { useCreateProduct, useDeleteProduct, useProduct, useUpdateProduct } from '@/src/api';
 
 const CreateProductScreen = () => {    
-    const { id } = useLocalSearchParams();
-    const product = products.find((p: Product) => p.id.toString() === id) // find the specific product to use its details as default values in the update page
+    const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
+    const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
     const isUpdating = !!id; //if id is defined, then we are updating the product and not creating it
-    const [name, setName] = useState(!isUpdating? "" : product?.name);
-    const [price, setPrice] = useState(!isUpdating? "" : product?.price.toString());
+
+    // Always call useProduct, but conditionally handle the result
+    const productQuery = useProduct(id as number);
+    const { data: product, error: fetchingError, isLoading } = isUpdating ? productQuery : { data: null, error: null, isLoading: false };
+
+    const [name, setName] = useState('');
+    const [price, setPrice] = useState('');
     const [error, setError] = useState('');
-    const [image, setImage] = useState<string>(!isUpdating? defaultImage : product?.image || defaultImage); // if we have a product
+    const [image, setImage] = useState<string | null>(null); // if we have a product
+
+    const { mutate: createProduct } = useCreateProduct();
+    const { mutate: updateProduct } = useUpdateProduct();
+    const { mutate: deleteProduct } = useDeleteProduct();
+
+    useEffect(() => {
+        if (product) {
+            setName(product.name);
+            setPrice(product.price.toString());
+            setImage(product.image);
+        }
+    }, [product]);
+
+    if (isLoading) {
+        return <ActivityIndicator />;
+    }
+
+    if (fetchingError) {
+        return (
+            <>
+                <Text>Failed to fetch product</Text>
+                <Text>{fetchingError.message}</Text>
+            </>
+        );
+    }
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -26,7 +55,7 @@ const CreateProductScreen = () => {
             aspect: [4, 4],
         });
         if (!result.canceled) {
-            setImage(result.assets[0].uri)
+            setImage(result.assets[0].uri);
         }
     };
 
@@ -35,7 +64,7 @@ const CreateProductScreen = () => {
         setImage(defaultImage);
         setName('');
         setPrice('');
-    }
+    };
 
     const showNoImageAlert = () => {
         return new Promise((resolve) => {
@@ -53,7 +82,7 @@ const CreateProductScreen = () => {
                 }
             ]);
         });
-    }
+    };
 
     const validateInput = async () => {
         setError('');
@@ -74,17 +103,27 @@ const CreateProductScreen = () => {
             return false;
         }
         return true;
-    }
+    };
 
     const onCreate = () => {
         // submit to the database
-        resetFields();
-    }
+        createProduct({ name, image, price: parseFloat(price) }, {
+            onSuccess: () => {
+                resetFields();
+                router.back();
+            }
+        });
+    };
 
     const onUpdate = () => {
         // submit to the database
-        resetFields();
-    }
+        updateProduct({ name, image, price: parseFloat(price), id: id! }, {
+            onSuccess: () => {
+                resetFields();
+                router.back();
+            }
+        });
+    };
 
     const onSubmit = async () => {
         const isValid = await validateInput();
@@ -95,10 +134,16 @@ const CreateProductScreen = () => {
         } else {
             onCreate();
         }
-    }
+    };
+
     const onDelete = () => {
-        console.warn('Deleted')
-    }
+        deleteProduct(id!, {
+            onSuccess: () => {
+                resetFields();
+                router.replace('/(admin)');
+            }
+        });
+    }; // the ! mark after id tells the function that id is never undefined when onDelete() is called
 
     const confirmDelete = () => {
         Alert.alert("Confirm", "Do you want to delete this product?", [
@@ -110,48 +155,49 @@ const CreateProductScreen = () => {
                 style: 'destructive',
                 onPress: onDelete,
             }
-        ])
-    } //this function is called when we want to delete the product (as admins), and it asks for confirmation to avoid accidental delete
+        ]);
+    }; // this function is called when we want to delete the product (as admins), and it asks for confirmation to avoid accidental delete
+
     return (
         <View style={styles.container}>
-            <Stack.Screen options={{title: !isUpdating? 'Create Product' : 'Update Product'}}/>
-            <Image 
-                source={{uri: image}}
+            <Stack.Screen options={{ title: !isUpdating ? 'Create Product' : 'Update Product' }} />
+            <Image
+                source={{ uri: image || defaultImage }}
                 style={styles.imageStyling}
             />
-            <View style={[{flexDirection: 'row', alignSelf: 'center'}]}>
+            <View style={[{ flexDirection: 'row', alignSelf: 'center' }]}>
                 <Text onPress={pickImage} style={styles.imageSelection}>Select Image</Text>
                 <Pressable onPress={() => {
-                    setImage(defaultImage)
-                    setName('')
-                    setPrice('')
-                    }}>
+                    setImage(defaultImage);
+                    setName('');
+                    setPrice('');
+                }}>
                     {({ pressed }) => (
-                    <FontAwesome
-                        name="trash"
-                        size={25}
-                        color={Colors.light.tint}
-                        style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 50 }}
-                    />
+                        <FontAwesome
+                            name="trash"
+                            size={25}
+                            color={Colors.light.tint}
+                            style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 50 }}
+                        />
                     )}
                 </Pressable>
                 {isUpdating && <Pressable onPress={() => {
-                    setImage(product?.image || defaultImage)
-                    setName(product?.name)
-                    setPrice(product?.price.toString())
-                    }}>
+                    setImage(product?.image || defaultImage);
+                    setName(product?.name ?? "");
+                    setPrice(product?.price?.toString() ?? "");
+                }}>
                     {({ pressed }) => (
-                    <FontAwesome
-                        name="undo"
-                        size={25}
-                        color={Colors.light.tint}
-                        style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 80}}
-                    />
+                        <FontAwesome
+                            name="undo"
+                            size={25}
+                            color={Colors.light.tint}
+                            style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 80 }}
+                        />
                     )}
                 </Pressable>}
             </View>
             <Text style={styles.label}>Name</Text>
-            <TextInput 
+            <TextInput
                 placeholder={!isUpdating ? 'name' : product?.name}
                 style={styles.input}
                 value={name}
@@ -159,7 +205,7 @@ const CreateProductScreen = () => {
                 placeholderTextColor={'#BDBDBD'}
             />
             <Text style={styles.label}>Price ($)</Text>
-            <TextInput 
+            <TextInput
                 placeholder={!isUpdating ? '9.99' : product?.price.toString()}
                 style={styles.input}
                 keyboardType='numeric'
@@ -167,22 +213,22 @@ const CreateProductScreen = () => {
                 onChangeText={setPrice}
                 placeholderTextColor={'#BDBDBD'}
             />
-            <Text style={{color: 'red'}}>{'\t' + error}</Text>
-            <Button 
-                text={ !isUpdating? "Create" : "Update"}
+            <Text style={{ color: 'red' }}>{'\t' + error}</Text>
+            <Button
+                text={!isUpdating ? "Create" : "Update"}
                 onPress={onSubmit}
             />
             {isUpdating && (
-                <Button 
-                    text= 'Delete'
+                <Button
+                    text='Delete'
                     onPress={confirmDelete}
                     buttonColor='#D32F2F'
                 />
             )}
 
         </View>
-    )
-}
+    );
+};
 
 export default CreateProductScreen;
 
@@ -196,22 +242,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 10,
         borderRadius: 5,
-        marginTop: 5, 
+        marginTop: 5,
         marginBottom: 20,
     },
     label: {
         color: 'gray',
-        fontSize: 16
+        fontSize: 16,
     },
     imageSelection: {
-        alignSelf: 'center', 
-        color: Colors.light.tint, 
-        fontWeight: 'bold', 
+        alignSelf: 'center',
+        color: Colors.light.tint,
+        fontWeight: 'bold',
         marginVertical: 10,
     },
     imageStyling: {
-        width: '50%', 
-        aspectRatio: 1, 
+        width: '50%',
+        aspectRatio: 1,
         alignSelf: 'center',
-    }
-})
+    },
+});
