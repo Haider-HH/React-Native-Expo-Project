@@ -2,8 +2,6 @@ import { ActivityIndicator, View } from 'react-native';
 import React from 'react';
 import Button from '../components/Button';
 import { Link, Redirect, Stack } from 'expo-router';
-import * as NavigationBar from 'expo-navigation-bar';
-import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../providers/AuthProvider';
 import { supabase } from '../lib/supabase';
 
@@ -11,8 +9,6 @@ import { supabase } from '../lib/supabase';
 
 const Index = () => {
   const { session, loading, isAdmin } = useAuth();
-  
-
   if (loading) {
     return <ActivityIndicator />;
   }

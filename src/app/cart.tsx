@@ -12,7 +12,7 @@ import { router } from 'expo-router';
 
 const CartScreen = () => {
 
-  const { items, total } = useCart(); // it uses context instead of props to avoid something called "props drilling"
+  const { items, total, checkout } = useCart(); // it uses context instead of props to avoid something called "props drilling"
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, padding: 10}}>
@@ -33,7 +33,8 @@ const CartScreen = () => {
         <Text style={{fontSize: 20, fontWeight: '500', marginTop: 10}}>
           Total Price: ${total}
         </Text>
-        <Button text="Checkout" onPress={() => Alert.alert('Checkout', "Order Completed Successfully :)")}/>
+        <Button text="Checkout" onPress={checkout} buttonColor='green' />
+        <Button text="Menu" onPress={() => router.push('/(user)/menu')} />
       </> 
       : 
       <View>

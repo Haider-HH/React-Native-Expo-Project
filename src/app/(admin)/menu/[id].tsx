@@ -6,7 +6,7 @@ import { defaultImage } from "@/src/components/ProductList"
 import { useCart } from '@/src/providers/cartProvider'
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from "@/src/constants/Colors"
-import { useProduct } from '@/src/api'
+import { useProduct } from '@/src/api/products'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 

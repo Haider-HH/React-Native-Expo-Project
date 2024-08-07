@@ -6,7 +6,7 @@ import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useCreateProduct, useDeleteProduct, useProduct, useUpdateProduct } from '@/src/api';
+import { useCreateProduct, useDeleteProduct, useProduct, useUpdateProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {    
     const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed

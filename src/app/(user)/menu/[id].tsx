@@ -5,7 +5,7 @@ import { PizzaSize } from '@/src/types'
 import { defaultImage } from "@/src/components/ProductList"
 import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/cartProvider'
-import { useProduct } from '@/src/api'
+import { useProduct } from '@/src/api/products'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // specifying the type to PizzaSize[] restricts this variable to accept only one of these 4 strings (see types.ts)
 

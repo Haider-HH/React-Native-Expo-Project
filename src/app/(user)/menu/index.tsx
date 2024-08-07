@@ -1,6 +1,6 @@
 import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import ProductList from "@/src/components/ProductList";
-import { useProductList } from '@/src/api';
+import { useProductList } from '@/src/api/products';
 // this file renders the available products to the user (renders every product as a ProductList.tsx component)
 
 // the FlatList component allows us to render a list of items both horizontally and vertically
