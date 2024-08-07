@@ -7,6 +7,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
 import Colors from '@/src/constants/Colors';
 import { useOrderDetails } from '@/src/api/orders';
+import { useUpdateOrderSub } from '@/src/api/orders/subscriptions';
 
 dayjs.extend(relativeTime);
 
@@ -16,6 +17,8 @@ const OrderDetails = () => {
     const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
     const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
     const {data: order, error, isLoading} = useOrderDetails(id as number);
+
+    useUpdateOrderSub(id!);
 
     if (isLoading) {
         return <ActivityIndicator />;
