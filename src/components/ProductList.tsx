@@ -1,13 +1,13 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Colors from '../constants/Colors'
-import { Product } from '../types'
+import { Tables } from '../types'
 import { Link, useSegments } from 'expo-router';
 
 export const defaultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'; // we use this just in case we have a missing image from the database
 
 type ProductListProps = {
-  product: Product;
+  product: Tables<'products'>;
 }; //this type is defined in the types.ts file, we use types because it helps us to avoid errors from typos and wrong types passed
 
 

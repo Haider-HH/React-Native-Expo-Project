@@ -16,6 +16,7 @@ const CreateProductScreen = () => {
     // Always call useProduct, but conditionally handle the result
     const productQuery = useProduct(id as number);
     const { data: product, error: fetchingError, isLoading } = isUpdating ? productQuery : { data: null, error: null, isLoading: false };
+    // Conditionally calling a hook violates the rules of hooks
 
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');

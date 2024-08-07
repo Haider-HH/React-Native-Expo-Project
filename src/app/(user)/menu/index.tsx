@@ -1,8 +1,5 @@
 import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import ProductList from "@/src/components/ProductList";
-import { supabase } from '@/src/lib/supabase';
-import { useQuery } from '@tanstack/react-query';
-import { Product } from '@/src/types';
 import { useProductList } from '@/src/api';
 // this file renders the available products to the user (renders every product as a ProductList.tsx component)
 
