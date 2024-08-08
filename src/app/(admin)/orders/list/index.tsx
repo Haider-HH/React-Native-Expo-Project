@@ -9,7 +9,6 @@ import { useInsertOrderSub } from '@/src/api/orders/subscriptions';
 
 export default function OrderScreen() {
   // Logging to ensure hooks are called correctly
-  console.log("OrderScreen rendered");
 
   const {data: orders, isLoading, error} = useAdminOrderList({archived: false});
   

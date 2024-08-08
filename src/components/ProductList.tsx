@@ -3,6 +3,7 @@ import React from 'react'
 import Colors from '../constants/Colors'
 import { Tables } from '../types'
 import { Link, useSegments } from 'expo-router';
+import RemoteImage from './RemoteImage';
 
 export const defaultImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'; // we use this just in case we have a missing image from the database
 
@@ -19,8 +20,9 @@ const ProductList: React.FC<ProductListProps> = ({ product }) => {
   return (
     <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
       <TouchableOpacity activeOpacity={0.7} style={styles.container}>
-        <Image 
-          source={{uri: product.image || defaultImage}}
+        <RemoteImage 
+          path={product.image}
+          fallback={defaultImage}
           style={styles.prodImage}
           resizeMode='contain'
         />

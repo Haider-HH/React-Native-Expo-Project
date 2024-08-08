@@ -6,6 +6,7 @@ import { defaultImage } from "@/src/components/ProductList"
 import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/cartProvider'
 import { useProduct } from '@/src/api/products'
+import RemoteImage from '@/src/components/RemoteImage'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // specifying the type to PizzaSize[] restricts this variable to accept only one of these 4 strings (see types.ts)
 
@@ -46,8 +47,9 @@ const ProductDetails = () => {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product?.name }} />
-      <Image 
-        source={{ uri: product?.image || defaultImage}}
+      <RemoteImage 
+        path={product?.image}
+        fallback={defaultImage}
         style={styles.image}
         resizeMode='contain'
       />

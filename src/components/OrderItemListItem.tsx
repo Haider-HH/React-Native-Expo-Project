@@ -3,6 +3,7 @@ import React from 'react';
 import { OrderItem, Tables } from '../types';
 import { defaultImage } from './ProductList';
 import Colors from '../constants/Colors';
+import RemoteImage from './RemoteImage';
 
 
 
@@ -28,8 +29,9 @@ type OrderItemListItemProps = {
 const OrderItemListItem: React.FC<OrderItemListItemProps> = ({ orderItem }) => {
   return (
     <View style={styles.container}>
-      <Image 
-        source={{uri: orderItem.products!.image || defaultImage}}
+      <RemoteImage 
+        path={orderItem.products?.image}
+        fallback={defaultImage}
         style={styles.orderImage}
       />
       <View>

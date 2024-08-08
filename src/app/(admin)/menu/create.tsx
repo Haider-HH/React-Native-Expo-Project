@@ -7,21 +7,27 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useCreateProduct, useDeleteProduct, useProduct, useUpdateProduct } from '@/src/api/products';
+import * as FileSystem from 'expo-file-system';
+import { supabase } from '@/src/lib/supabase';
+import { randomUUID } from 'expo-crypto';
+import { decode } from 'base64-arraybuffer';
+import RemoteImage from '@/src/components/RemoteImage';
 
 const CreateProductScreen = () => {    
-    const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
+    const { id: idString } = useLocalSearchParams();
     const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
-    const isUpdating = !!id; //if id is defined, then we are updating the product and not creating it
+    const isUpdating = !!id;
 
-    // Always call useProduct, but conditionally handle the result
     const productQuery = useProduct(id as number);
     const { data: product, error: fetchingError, isLoading } = isUpdating ? productQuery : { data: null, error: null, isLoading: false };
-    // Conditionally calling a hook violates the rules of hooks
 
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [error, setError] = useState('');
-    const [image, setImage] = useState<string | null>(null); // if we have a product
+    const [image, setImage] = useState<string | null>(null);
+    const [buttonText, setButtonText] = useState(isUpdating ? "Update" : "Create");
+    const [deleteButtonText, setDeleteButtonText] = useState("Delete");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { mutate: createProduct } = useCreateProduct();
     const { mutate: updateProduct } = useUpdateProduct();
@@ -61,7 +67,6 @@ const CreateProductScreen = () => {
     };
 
     const resetFields = () => {
-        // Save in database (later)
         setImage(defaultImage);
         setName('');
         setPrice('');
@@ -106,45 +111,61 @@ const CreateProductScreen = () => {
         return true;
     };
 
-    const onCreate = () => {
-        // submit to the database
-        createProduct({ name, image, price: parseFloat(price) }, {
+    const onCreate = async () => {
+        const isValid = await validateInput();
+        if (!isValid) return;
+
+        setButtonText("Creating...");
+        setIsSubmitting(true);
+
+        const imagePath = await uploadImage();
+
+        createProduct({ name, image: imagePath, price: parseFloat(price) }, {
             onSuccess: () => {
                 resetFields();
                 router.back();
+            },
+            onSettled: () => {
+                setButtonText("Create");
+                setIsSubmitting(false);
             }
         });
     };
 
-    const onUpdate = () => {
-        // submit to the database
+    const onUpdate = async () => {
+        const isValid = await validateInput();
+        if (!isValid) return;
+
+        setButtonText("Updating...");
+        setIsSubmitting(true);
+
         updateProduct({ name, image, price: parseFloat(price), id: id! }, {
             onSuccess: () => {
                 resetFields();
                 router.back();
+            },
+            onSettled: () => {
+                setButtonText("Update");
+                setIsSubmitting(false);
             }
         });
     };
 
-    const onSubmit = async () => {
-        const isValid = await validateInput();
-        if (!isValid) return;
-
-        if (isUpdating) {
-            onUpdate();
-        } else {
-            onCreate();
-        }
-    };
-
     const onDelete = () => {
+        setDeleteButtonText("Deleting...");
+        setIsSubmitting(true);
+
         deleteProduct(id!, {
             onSuccess: () => {
                 resetFields();
                 router.replace('/(admin)');
+            },
+            onSettled: () => {
+                setDeleteButtonText("Delete");
+                setIsSubmitting(false);
             }
         });
-    }; // the ! mark after id tells the function that id is never undefined when onDelete() is called
+    };
 
     const confirmDelete = () => {
         Alert.alert("Confirm", "Do you want to delete this product?", [
@@ -157,13 +178,45 @@ const CreateProductScreen = () => {
                 onPress: onDelete,
             }
         ]);
-    }; // this function is called when we want to delete the product (as admins), and it asks for confirmation to avoid accidental delete
+    };
+
+    const onSubmit = async () => {
+        const isValid = await validateInput();
+        if (!isValid) return;
+
+        if (isUpdating) {
+            await onUpdate();
+        } else {
+            await onCreate();
+        }
+    };
+
+    const uploadImage = async () => {
+        if (!image?.startsWith('file://')) {
+            return;
+        }
+
+        const base64 = await FileSystem.readAsStringAsync(image, {
+            encoding: 'base64',
+        });
+        const filePath = `${randomUUID()}.png`;
+        const contentType = 'image/png';
+        const { data, error } = await supabase.storage
+            .from('product-images')
+            .upload(filePath, decode(base64), { contentType });
+
+        console.log(error);
+        if (data) {
+            return data.path;
+        };
+    };
 
     return (
         <View style={styles.container}>
             <Stack.Screen options={{ title: !isUpdating ? 'Create Product' : 'Update Product' }} />
-            <Image
-                source={{ uri: image || defaultImage }}
+            <RemoteImage
+                path={product?.image}
+                fallback={defaultImage}
                 style={styles.imageStyling}
             />
             <View style={[{ flexDirection: 'row', alignSelf: 'center' }]}>
@@ -216,17 +269,18 @@ const CreateProductScreen = () => {
             />
             <Text style={{ color: 'red' }}>{'\t' + error}</Text>
             <Button
-                text={!isUpdating ? "Create" : "Update"}
+                text={buttonText}
                 onPress={onSubmit}
+                disabled={isSubmitting}
             />
             {isUpdating && (
                 <Button
-                    text='Delete'
+                    text={deleteButtonText}
                     onPress={confirmDelete}
-                    buttonColor='#D32F2F'
+                    buttonColor="#D32F2F"
+                    disabled={isSubmitting}
                 />
             )}
-
         </View>
     );
 };
