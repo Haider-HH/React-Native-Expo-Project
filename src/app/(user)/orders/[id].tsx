@@ -1,6 +1,6 @@
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import React from 'react';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, BackHandler } from 'react-native';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import OrderItemListItem from '../../../components/OrderItemListItem';
 import OrderListItem from '../../../components/OrderListItem';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -11,14 +11,26 @@ import { useUpdateOrderSub } from '@/src/api/orders/subscriptions';
 
 dayjs.extend(relativeTime);
 
-// this file renders the details of a specific order when selected from the orders menu (that is rendered by the index.tsx in the orders folder)
-
 const OrderDetails = () => {
-    const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
+    const { id: idString } = useLocalSearchParams();
     const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
-    const {data: order, error, isLoading} = useOrderDetails(id as number);
+    const { data: order, error, isLoading } = useOrderDetails(id as number);
 
     useUpdateOrderSub(id!);
+
+    useEffect(() => {
+        const backAction = () => {
+            router.back();
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, []);
 
     if (isLoading) {
         return <ActivityIndicator />;
@@ -40,12 +52,14 @@ const OrderDetails = () => {
                 data={order?.order_items}
                 renderItem={({ item }) => <OrderItemListItem orderItem={item} />}
                 ListFooterComponent={
-                    <Text style={styles.totalPrice}>
-                        Total Price: {''}
-                        <Text style={{color: Colors.light.tint}}>
-                            ${order?.total}
+                    <>
+                        <Text style={styles.totalPrice}>
+                            Total Price: {''}
+                            <Text style={{color: Colors.light.tint}}>
+                                ${order?.total}
+                            </Text>
                         </Text>
-                    </Text>
+                    </>
                 }
                 ListHeaderComponent={() => <OrderListItem order={order!} />}
                 contentContainerStyle={styles.listContent}
@@ -70,4 +84,3 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
 });
-

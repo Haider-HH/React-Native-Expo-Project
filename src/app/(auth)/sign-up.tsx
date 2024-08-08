@@ -9,7 +9,6 @@ import { supabase } from '@/src/lib/supabase';
 const SignUp = () => {
     const [form, setForm] = useState({email: '', password: ''});
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     // this function connects the backend with the frontend.
@@ -102,7 +101,6 @@ const SignUp = () => {
                         )}
                     </Pressable>
                 </View>
-                <Text style={{color: 'red'}}>{'\t' + error}</Text>
                 <Button 
                     text= {!loading? 'Create account' : 'Creating account...'}
                     onPress={signUpWithEmail}

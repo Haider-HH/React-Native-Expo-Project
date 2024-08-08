@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 
 const Index = () => {
   const { session, loading, isAdmin } = useAuth();
+  
   if (loading) {
     return <ActivityIndicator />;
   }

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, Platform, FlatList, Alert } from 'react-native'
-import React from 'react';
+import { View, Text, Platform, FlatList, Alert, BackHandler } from 'react-native'
+import React, { useEffect } from 'react';
 import { useCart } from '../providers/cartProvider';
 import CartListItem from '../components/CartListItem';
 import Button from '../components/Button';
@@ -13,6 +13,20 @@ import { router } from 'expo-router';
 const CartScreen = () => {
 
   const { items, total, checkout } = useCart(); // it uses context instead of props to avoid something called "props drilling"
+
+  useEffect(() => {
+    const backAction = () => {
+        router.back();
+        return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, padding: 10}}>
