@@ -18,20 +18,6 @@ const OrderDetails = () => {
 
     useUpdateOrderSub(id!);
 
-    useEffect(() => {
-        const backAction = () => {
-            router.back();
-            return true;
-        };
-
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-
-        return () => backHandler.remove();
-    }, []);
-
     if (isLoading) {
         return <ActivityIndicator />;
     }

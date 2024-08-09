@@ -6,6 +6,7 @@ import CartListItem from '../components/CartListItem';
 import Button from '../components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
 import { router } from 'expo-router';
+import Colors from '../constants/Colors';
 
 
 // this file renders the cart screen (shows the details of the current order [this screen is for the user only])
@@ -44,11 +45,16 @@ const CartScreen = () => {
           }}
           contentContainerStyle={{gap: 10}}
         />
+      <>
         <Text style={{fontSize: 20, fontWeight: '500', marginTop: 10}}>
-          Total Price: ${total}
+            Total Price: {''}
+            <Text style={{color: Colors.light.tint}}>
+                ${total}
+            </Text>
         </Text>
-        <Button text="Checkout" onPress={checkout} buttonColor='green' />
-        <Button text="Menu" onPress={() => router.push('/(user)/menu')} />
+      </>
+      <Button text="Checkout" onPress={checkout} buttonColor='green' />
+      <Button text="Menu" onPress={() => router.push('/(user)/menu')} />
       </> 
       : 
       <View>

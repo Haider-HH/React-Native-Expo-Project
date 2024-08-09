@@ -15,7 +15,7 @@ import RemoteImage from '@/src/components/RemoteImage';
 
 const CreateProductScreen = () => {    
     const { id: idString } = useLocalSearchParams();
-    const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
+    const id = idString ? parseFloat(Array.isArray(idString) ? idString?.[0] : idString) : undefined;
     const isUpdating = !!id;
 
     const productQuery = useProduct(id as number);
@@ -35,9 +35,9 @@ const CreateProductScreen = () => {
 
     useEffect(() => {
         if (product) {
-            setName(product.name);
-            setPrice(product.price.toString());
-            setImage(product.image);
+          setName(product.name);
+          setPrice(product.price.toString());
+          setImage(product.image);
         }
     }, [product]);
 
@@ -62,7 +62,8 @@ const CreateProductScreen = () => {
             aspect: [4, 4],
         });
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            const imagePath = await uploadImage(result.assets[0].uri);
+            setImage(imagePath || defaultImage)
         }
     };
 
@@ -118,9 +119,8 @@ const CreateProductScreen = () => {
         setButtonText("Creating...");
         setIsSubmitting(true);
 
-        const imagePath = await uploadImage();
 
-        createProduct({ name, image: imagePath, price: parseFloat(price) }, {
+        createProduct({ name, image , price: parseFloat(price) }, {
             onSuccess: () => {
                 resetFields();
                 router.back();
@@ -138,6 +138,7 @@ const CreateProductScreen = () => {
 
         setButtonText("Updating...");
         setIsSubmitting(true);
+        console.log(image);
 
         updateProduct({ name, image, price: parseFloat(price), id: id! }, {
             onSuccess: () => {
@@ -191,7 +192,7 @@ const CreateProductScreen = () => {
         }
     };
 
-    const uploadImage = async () => {
+    const uploadImage = async (image: string | null) => {
         if (!image?.startsWith('file://')) {
             return;
         }
@@ -205,7 +206,7 @@ const CreateProductScreen = () => {
             .from('product-images')
             .upload(filePath, decode(base64), { contentType });
 
-        console.log(error);
+        console.log("Uploading Image Error: ", error);
         if (data) {
             return data.path;
         };
@@ -215,7 +216,7 @@ const CreateProductScreen = () => {
         <View style={styles.container}>
             <Stack.Screen options={{ title: !isUpdating ? 'Create Product' : 'Update Product' }} />
             <RemoteImage
-                path={product?.image}
+                path={image}
                 fallback={defaultImage}
                 style={styles.imageStyling}
             />
