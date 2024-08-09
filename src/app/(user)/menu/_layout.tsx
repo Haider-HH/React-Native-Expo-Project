@@ -31,7 +31,7 @@ export default function MenuStack (){
                   )}
                 </Pressable>
               </Link>
-              {isAdmin? <Link href='/' asChild>
+              {isAdmin && <Link href='/' asChild>
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome 
@@ -43,17 +43,6 @@ export default function MenuStack (){
                   )}
                 </Pressable>
               </Link>
-              :
-              <Pressable onPress={() => supabase.auth.signOut()}>
-                {({pressed}) => (
-                  <Entypo 
-                    name='log-out'
-                    size={25}
-                    color={Colors.light.tint}
-                    style={{opacity: pressed ? 0.5 : 1}}
-                  />
-                )}
-              </Pressable>
               }
             </>
           )}}
