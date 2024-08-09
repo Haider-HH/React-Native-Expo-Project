@@ -31,8 +31,6 @@ const Index = () => {
         <Link href="/(admin)" asChild>
           <Button text="Admin" />
         </Link>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-        </View>
         <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
     </View>
   );

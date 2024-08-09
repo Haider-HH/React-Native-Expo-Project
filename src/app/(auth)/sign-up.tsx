@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { Link, router, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
@@ -6,57 +6,45 @@ import Button from '@/src/components/Button';
 import { Entypo } from '@expo/vector-icons';
 import { supabase } from '@/src/lib/supabase';
 
+
+
+
 const SignUp = () => {
-    const [form, setForm] = useState({email: '', password: ''});
+    const [form, setForm] = useState({email: '', password: '', username: '', phone_number: '', full_name: ''});
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     // this function connects the backend with the frontend.
     const signUpWithEmail = async () => {
         setLoading(true);
-        const { error } = await supabase.auth.signUp({
+
+        const { data, error } = await supabase.auth.signUp({
             email: form.email,
             password: form.password
         });
 
         if (error) {
             Alert.alert("Error", error.message)
+            setLoading(false)
+            return;
+        }
+        if (data.user) {
+            const {error: updateError} = await supabase.from('profiles').upsert({
+                id: data.user.id,
+                username: form.username,
+                full_name: form.full_name,
+                phone_number: form.phone_number,
+
+            })
+            if (updateError) {
+                Alert.alert("Error", updateError.message);
+                setLoading(false);
+                return;
+            };
+            Alert.alert('Success', "Account Created Successfully");
         }
         setLoading(false);
     }
-    // the validateInput and onSubmit has no use for now (4/8/2024)
-    // const validateInput = () => {
-    //     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    //     if (!form.email) {
-    //         setError('Email is required')
-    //         return false;
-    //     }
-    //     if (!emailPattern.test(form.email)) {
-    //         setError('Invalid email address');
-    //         return false;
-    //     }
-    //     if (!form.password) {
-    //         setError('Password is required')
-    //         return false;
-    //     }
-    //     if (form.password.length > 0 && form.password.length < 8) {
-    //         setError('Password should be atleast 8 characters long')
-    //         return false;
-    //     }
-    //     return true;
-    // }
-    
-    // const onSubmit = () => {
-    //     if (!validateInput()) {
-    //         return;
-    //     }
-    //     else {
-    //         setForm({email: '', password: ''})
-    //         setError('')
-    //         router.push('/(user)')
-    //     }
-    // };
 
     const handlePasswordChange = (text: string) => {
         // Filter out characters with ASCII values outside the range 32 to 126
@@ -70,7 +58,24 @@ const SignUp = () => {
 
     return (
             <View style={styles.container}>
+                <ScrollView>
                 <Stack.Screen options={{title: 'Sign up'}}/>
+                <Text style={styles.label}>Username</Text>
+                <TextInput 
+                    placeholder='A Unique Username'
+                    style={styles.input}
+                    value={form.username}
+                    onChangeText={(e) => setForm({...form, username: e})}
+                    placeholderTextColor={'#BDBDBD'}
+                />
+                <Text style={styles.label}>Full Name</Text>
+                <TextInput 
+                    placeholder='Your Full Name'
+                    style={styles.input}
+                    value={form.full_name}
+                    onChangeText={(e) => setForm({...form, full_name: e})}
+                    placeholderTextColor={'#BDBDBD'}
+                />
                 <Text style={styles.label}>Email</Text>
                 <TextInput 
                     placeholder='example@gmail.com'
@@ -79,6 +84,15 @@ const SignUp = () => {
                     onChangeText={(e) => setForm({...form, email: e})}
                     placeholderTextColor={'#BDBDBD'}
                     keyboardType='email-address'
+                />
+                <Text style={styles.label}>Phone Number</Text>
+                <TextInput 
+                    placeholder='+964xxxxxxxxxx'
+                    style={styles.input}
+                    value={form.phone_number}
+                    onChangeText={(e) => setForm({...form, phone_number: e})}
+                    placeholderTextColor={'#BDBDBD'}
+                    keyboardType='phone-pad'
                 />
                 <Text style={styles.label}>Password</Text>
                 <View>
@@ -101,12 +115,15 @@ const SignUp = () => {
                         )}
                     </Pressable>
                 </View>
+
+
                 <Button 
                     text= {!loading? 'Create account' : 'Creating account...'}
                     onPress={signUpWithEmail}
                     disabled={loading}
                 />
                 <Link href="/sign-in" style={styles.creatAccount}>Sign in</Link>
+                </ScrollView>
             </View>
     )
 }
@@ -139,4 +156,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
         marginVertical: 10,
     },
+
 })

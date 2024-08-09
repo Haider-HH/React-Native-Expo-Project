@@ -28,7 +28,7 @@ const profile = () => {
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text style={{marginBottom: 25}}>Welcome {userData?.username} 😊</Text>
         <Text style={{marginBottom: 15}}>Sign Out</Text>
-        <Pressable onPress={() => supabase.auth.signOut()}>
+        <Pressable onPress={async () => await supabase.auth.signOut()}>
             {({pressed}) => (
             <Entypo 
             name='log-out'
