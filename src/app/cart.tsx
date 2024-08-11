@@ -13,7 +13,7 @@ import Colors from '../constants/Colors';
 
 const CartScreen = () => {
 
-  const { items, total, checkout } = useCart(); // it uses context instead of props to avoid something called "props drilling"
+  const { items, total, checkoutWithCard, checkoutCash } = useCart(); // it uses context instead of props to avoid something called "props drilling"
 
   useEffect(() => {
     const backAction = () => {
@@ -28,6 +28,25 @@ const CartScreen = () => {
 
     return () => backHandler.remove();
   }, []);
+
+  const confirmPaymentType = () => {
+    Alert.alert("Checkout", "Specify Payment Method", [
+
+      {
+        text: 'Cancel',
+        style: 'destructive'
+      },
+      {
+        text: 'cash',
+        onPress: checkoutCash,
+      },
+      {
+        text: 'Card',
+        onPress: checkoutWithCard,
+      },
+
+    ])
+  }
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, padding: 10}}>
@@ -53,7 +72,7 @@ const CartScreen = () => {
             </Text>
         </Text>
       </>
-      <Button text="Checkout" onPress={checkout} buttonColor='green' />
+      <Button text="Checkout" onPress={confirmPaymentType} buttonColor='green' />
       <Button text="Menu" onPress={() => router.push('/(user)/menu')} />
       </> 
       : 

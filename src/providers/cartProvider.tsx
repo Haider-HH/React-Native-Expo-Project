@@ -2,9 +2,9 @@ import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { CartItem, Tables } from "../types";
 import { randomUUID } from "expo-crypto";
 import { useInsertOrder } from "../api/orders";
-import { isEnabled } from "react-native/Libraries/Performance/Systrace";
 import { router } from "expo-router";
 import { useInsertOrderItems } from "../api/order-items";
+import { initializePaymentSheet, openPaymentSheet } from "../lib/stripe";
 
 
 type CartType = {
@@ -12,7 +12,8 @@ type CartType = {
   addItem: (product: Tables<'products'>, size: CartItem['size']) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
   total: number;
-  checkout: () => void
+  checkoutWithCard: () => void;
+  checkoutCash: () => void;
 }
 
 const CartContext = createContext<CartType>({
@@ -20,7 +21,8 @@ const CartContext = createContext<CartType>({
   addItem: () => {},
   updateQuantity: () => {},
   total: 0,
-  checkout: () => {}
+  checkoutWithCard: () => {},
+  checkoutCash: () => {}
 });
 
 const CartProvider = ({ children }: PropsWithChildren) => {
@@ -57,7 +59,19 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     setItems([]);
   }
 
-  const checkout = () => {
+  const checkoutWithCard = async () => {
+    await initializePaymentSheet(Math.floor(total*100));
+    const payed = await openPaymentSheet();
+    if (!payed) {
+      return;
+    }
+    insertOrder({
+      total,
+      user_id: ""
+    }, {onSuccess: saveOrderItems})
+  };
+
+  const checkoutCash = () => {
     insertOrder({
       total,
       user_id: ""
@@ -81,7 +95,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <CartContext.Provider value={{items: items, addItem: addItem, updateQuantity: updateQuantity, total: total, checkout: checkout}}>
+    <CartContext.Provider value={{items: items, addItem: addItem, updateQuantity: updateQuantity, total: total, checkoutWithCard: checkoutWithCard, checkoutCash: checkoutCash}}>
       {children}
     </CartContext.Provider>
   )
