@@ -29,7 +29,7 @@ export default function OrderScreen() {
 
   return (
     <View>
-      <Stack.Screen options={{headerShown: true, title: "Active"}} />
+      <Stack.Screen options={{headerShown: true, title: `Active (${orders?.length})`}} />
       <FlatList 
         data={orders}
         renderItem={({item}) => <OrderListItem order={item} />}
