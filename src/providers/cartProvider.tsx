@@ -61,7 +61,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   }
 
   const checkoutWithCard = async () => {
-    const initialized = await initializePaymentSheet(Math.floor(total * 100));
+    const initialized = await initializePaymentSheet(Math.round(total * 100));
     if (!initialized) {
         Alert.alert("Error", "Failed to initialize payment sheet");
         return;
