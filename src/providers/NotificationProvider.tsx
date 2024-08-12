@@ -1,10 +1,8 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import * as Notifications from 'expo-notifications';
 import {registerForPushNotificationsAsync} from "../lib/notifications";
-import { sendPushNotification } from "../lib/notifications";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./AuthProvider";
-import profile from "../app/(user)/profile";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -42,7 +40,7 @@ const NotificationProvider = ({children}: PropsWithChildren) => {
       });
   
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
+        console.log("RESPONSE", response);
       });
   
       return () => {
@@ -53,7 +51,6 @@ const NotificationProvider = ({children}: PropsWithChildren) => {
       };
     }, []);
 
-    console.log('Notification: ', notification)
     return (
         <>
             {children}

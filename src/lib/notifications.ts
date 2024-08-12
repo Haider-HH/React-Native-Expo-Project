@@ -43,7 +43,6 @@ export async function registerForPushNotificationsAsync() {
             projectId,
           })
         ).data;
-        console.log(pushTokenString);
         return pushTokenString;
       } catch (e: unknown) {
         handleRegistrationError(`${e}`);
@@ -53,7 +52,7 @@ export async function registerForPushNotificationsAsync() {
     }
 };
 
-export async function sendPushNotification(expoPushToken: string, orderNumber: number, body: string) {
+export async function sendPushNotification(expoPushToken: string, body: string, orderNumber?: number) {
     const message = {
       to: expoPushToken,
       sound: 'default',
@@ -79,10 +78,11 @@ const getUserToken = async (userId: string) => {
         console.log(error);
     }
     return data?.expo_push_token;
-}
+};
+
 
 export const notifyUserOrderUpdates = async (order: Tables<'orders'>) => {
     const token = await getUserToken(order.user_id);
     console.log('Notifying: ', token);
-    sendPushNotification(token, order.id, order.status);
-}
+    sendPushNotification(token!, order.status, order.id);
+};

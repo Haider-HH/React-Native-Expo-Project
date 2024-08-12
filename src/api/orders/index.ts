@@ -4,7 +4,6 @@ import { useAuth } from "@/src/providers/AuthProvider";
 import { Tables } from "@/src/database.types";
 import { InsertTables, UpdateTables } from "@/src/types";
 
-
 export const useAdminOrderList = ({ archived = false }) => {
 
     const stats = !archived ? ['New', "Cooking", "Delivering"] : ["Delivered"];
@@ -90,4 +89,4 @@ export const useUpdateOrder = () => {
       await queryClient.invalidateQueries({queryKey: ['orders', id]});
     },
   })
-}
+};

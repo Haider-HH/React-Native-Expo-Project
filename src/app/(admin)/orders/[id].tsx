@@ -20,6 +20,7 @@ const OrderDetails = () => {
     const id = idString ? parseFloat(Array.isArray(idString) ? idString[0] : idString) : undefined;
     const {data: order, error, isLoading} = useOrderDetails(id as number);
     const {mutate: updateOrder} = useUpdateOrder();
+    console.log("userId", order?.user_id);
 
     if (isLoading) {
         return <ActivityIndicator />;
@@ -37,6 +38,7 @@ const OrderDetails = () => {
     const updateStatus = async (status: string) => {
         updateOrder({id: id!, updatedFields: { status } })
         if (order){
+            console.log(order.user_id)
             await notifyUserOrderUpdates({...order, status: status})
         }
     }
