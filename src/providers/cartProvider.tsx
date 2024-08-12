@@ -5,6 +5,7 @@ import { useInsertOrder } from "../api/orders";
 import { router } from "expo-router";
 import { useInsertOrderItems } from "../api/order-items";
 import { initializePaymentSheet, openPaymentSheet } from "../lib/stripe";
+import { Alert } from "react-native";
 
 
 type CartType = {
@@ -60,16 +61,21 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   }
 
   const checkoutWithCard = async () => {
-    await initializePaymentSheet(Math.floor(total*100));
+    const initialized = await initializePaymentSheet(Math.floor(total * 100));
+    if (!initialized) {
+        Alert.alert("Error", "Failed to initialize payment sheet");
+        return;
+    }
     const payed = await openPaymentSheet();
     if (!payed) {
-      return;
+        return;
     }
     insertOrder({
-      total,
-      user_id: ""
-    }, {onSuccess: saveOrderItems})
+        total,
+        user_id: ""
+    }, { onSuccess: saveOrderItems });
   };
+
 
   const checkoutCash = () => {
     insertOrder({
