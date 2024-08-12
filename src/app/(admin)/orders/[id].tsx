@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import Colors from '@/src/constants/Colors';
 import { ActivityIndicator } from 'react-native';
 import { useOrderDetails, useUpdateOrder } from '@/src/api/orders';
+import { notifyUserOrderUpdates } from '@/src/lib/notifications';
 
 dayjs.extend(relativeTime);
 
@@ -33,8 +34,11 @@ const OrderDetails = () => {
         );
     }
 
-    const updateStatus = (status: string) => {
+    const updateStatus = async (status: string) => {
         updateOrder({id: id!, updatedFields: { status } })
+        if (order){
+            await notifyUserOrderUpdates({...order, status: status})
+        }
     }
     return (
         <View style={styles.container}>
