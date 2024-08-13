@@ -1,5 +1,5 @@
-import { View, FlatList, ActivityIndicator, Text } from 'react-native';
-import React from "react";
+import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
+import React, { useState } from "react";
 import OrderListItem from "@/src/components/OrderListItem"
 import { router, Stack } from 'expo-router';
 import { useUserOrderList } from '@/src/api/orders';
@@ -11,9 +11,16 @@ import Button from '@/src/components/Button';
 
 export default function OrderScreen() {
 
-  const {data: orders, error, isLoading} = useUserOrderList();
+  const {data: orders, error, isLoading, refetch} = useUserOrderList();
 
-  if (isLoading) {
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch(); // refetch data
+    setRefreshing(false);
+  };
+
+  if (isLoading && !refreshing) {
     return <ActivityIndicator />
   }
 
@@ -35,6 +42,9 @@ export default function OrderScreen() {
         data={orders}
         renderItem={({item}) => <OrderListItem order={item} />}
         contentContainerStyle={{gap: 10, padding: 10}} //for row styling
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
       :
       <View>

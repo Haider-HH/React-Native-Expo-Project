@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { OrderStatus } from '@/src/types';
@@ -61,15 +61,17 @@ const OrderDetails = () => {
                             Status
                         </Text>
                         <View style={{flexDirection: 'row', marginTop: 10}}>
-                            {status.map((stat) => {
-                                return (
-                                    <TouchableOpacity key={stat} activeOpacity={0.7} onPress={() => updateStatus(stat)}>
-                                        <View style={[styles.statusStyling, order?.status === stat && {backgroundColor: Colors.light.tint}]}>
-                                            <Text style={[order?.status === stat? {color: 'white'} : {color: Colors.light.tint}]}>{stat.toLowerCase()}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                )
-                            })}
+                            <ScrollView horizontal>
+                                {status.map((stat) => {
+                                    return (
+                                        <TouchableOpacity key={stat} activeOpacity={0.7} onPress={() => updateStatus(stat)}>
+                                            <View style={[styles.statusStyling, order?.status === stat && {backgroundColor: Colors.light.tint}]}>
+                                                <Text style={[order?.status === stat? {color: 'white'} : {color: Colors.light.tint}]}>{stat.toLowerCase()}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </ScrollView>
                         </View>
                     </View>
                 }
