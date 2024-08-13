@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView } from 'react-native'
 import React, { useState } from 'react'
-import { Link, router, Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
 import { Entypo } from '@expo/vector-icons';
@@ -34,7 +34,6 @@ const SignUp = () => {
                 username: form.username,
                 full_name: form.full_name,
                 phone_number: form.phone_number,
-
             })
             if (updateError) {
                 Alert.alert("Error", updateError.message);

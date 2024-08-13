@@ -5,7 +5,7 @@ export default function AuthLayout() {
   const { session } = useAuth();
 
   if (session) {
-    return <Redirect href={'/'}/>
+    return <Redirect href={'/'} />
   } // if the user is already signed in, then we shouldn't allow him to access the auth screens (sign in/up)
 
   return <Stack />;

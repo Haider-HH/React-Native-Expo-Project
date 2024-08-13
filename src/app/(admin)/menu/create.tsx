@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Button from '@/src/components/Button';
 import { defaultImage } from '@/src/components/ProductList';
@@ -28,6 +28,7 @@ const CreateProductScreen = () => {
     const [buttonText, setButtonText] = useState(isUpdating ? "Update" : "Create");
     const [deleteButtonText, setDeleteButtonText] = useState("Delete");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadingImageLoading, setUploadingImageLoading] = useState(false);
 
     const { mutate: createProduct } = useCreateProduct();
     const { mutate: updateProduct } = useUpdateProduct();
@@ -193,6 +194,7 @@ const CreateProductScreen = () => {
     };
 
     const uploadImage = async (image: string | null) => {
+        setUploadingImageLoading(true);
         if (!image?.startsWith('file://')) {
             return;
         }
@@ -208,44 +210,56 @@ const CreateProductScreen = () => {
 
         console.log("Uploading Image Error: ", error);
         if (data) {
+            setUploadingImageLoading(false);
             return data.path;
         };
+        setUploadingImageLoading(false);
     };
 
     return (
         <View style={styles.container}>
             <Stack.Screen options={{ title: !isUpdating ? 'Create Product' : 'Update Product' }} />
+            {uploadingImageLoading && <Text style={{color: Colors.light.tint, alignSelf: 'center', fontWeight: 'bold'}}>Loading Image, Please Wait :)</Text>}
             <RemoteImage
                 path={image}
                 fallback={defaultImage}
                 style={styles.imageStyling}
             />
             <View style={[{ flexDirection: 'row', alignSelf: 'center' }]}>
-                <Text onPress={pickImage} style={styles.imageSelection}>Select Image</Text>
-                <Pressable onPress={() => {
+                <Text 
+                    onPress={pickImage} 
+                    style={[styles.imageSelection, uploadingImageLoading && {color: 'lightgrey'}]} 
+                    disabled={uploadingImageLoading}>
+
+                    Select Image
+                </Text>
+                <Pressable 
+                    onPress={() => {
                     setImage(defaultImage);
                     setName('');
                     setPrice('');
-                }}>
+                }} disabled={uploadingImageLoading}>
                     {({ pressed }) => (
                         <FontAwesome
                             name="trash"
                             size={25}
-                            color={Colors.light.tint}
+                            color={!uploadingImageLoading ? Colors.light.tint : 'lightgrey'}
                             style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 50 }}
                         />
                     )}
                 </Pressable>
-                {isUpdating && <Pressable onPress={() => {
+                {isUpdating && 
+                <Pressable 
+                    onPress={() => {
                     setImage(product?.image || defaultImage);
                     setName(product?.name ?? "");
                     setPrice(product?.price?.toString() ?? "");
-                }}>
+                }} disabled={uploadingImageLoading}>
                     {({ pressed }) => (
                         <FontAwesome
                             name="undo"
                             size={25}
-                            color={Colors.light.tint}
+                            color={!uploadingImageLoading ? Colors.light.tint : 'lightgrey'}
                             style={{ marginTop: 5, opacity: pressed ? 0.5 : 1, position: 'absolute', marginLeft: 80 }}
                         />
                     )}
@@ -272,14 +286,15 @@ const CreateProductScreen = () => {
             <Button
                 text={buttonText}
                 onPress={onSubmit}
-                disabled={isSubmitting}
+                buttonColor={uploadingImageLoading ? 'lightgrey' : ''}
+                disabled={isSubmitting || uploadingImageLoading}
             />
             {isUpdating && (
                 <Button
                     text={deleteButtonText}
                     onPress={confirmDelete}
-                    buttonColor="#D32F2F"
-                    disabled={isSubmitting}
+                    buttonColor={!uploadingImageLoading ? "#D32F2F" : 'lightgrey'}
+                    disabled={isSubmitting || uploadingImageLoading}
                 />
             )}
         </View>

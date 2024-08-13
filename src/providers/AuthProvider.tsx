@@ -9,7 +9,6 @@ type Profile = {
     full_name: string | null;
     updated_at: string | null;
     username: string | null;
-    website: string | null;
 };
 
 type AuthData = {

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable, TextInput, Alert } from 'react-native'
 import React, { useState } from 'react'
-import { Link, router, Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
