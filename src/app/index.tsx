@@ -11,6 +11,11 @@ const Index = () => {
 
   const handleSignOut= async () => {
     setIsSigningOut(true);
+
+    if (profile?.id) {
+      await supabase.from('profiles').update({expo_push_token: null}).eq('id', profile.id)
+    } // reset the expo push token so when the user signs out (or signs in from a different account, the push token is updated for him/her)
+
     const {error} = await supabase.auth.signOut();
     if (error) {
       Alert.alert("Error Signing Out", error.message);

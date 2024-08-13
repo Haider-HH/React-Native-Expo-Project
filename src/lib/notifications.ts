@@ -9,7 +9,7 @@ import { Tables } from "../types";
 function handleRegistrationError(errorMessage: string) {
     alert(errorMessage);
     throw new Error(errorMessage);
-  }
+}
 
 export async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {

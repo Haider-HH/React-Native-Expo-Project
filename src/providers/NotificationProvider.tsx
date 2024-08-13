@@ -3,6 +3,7 @@ import * as Notifications from 'expo-notifications';
 import {registerForPushNotificationsAsync} from "../lib/notifications";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./AuthProvider";
+import { useRouter } from 'expo-router';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -15,11 +16,13 @@ Notifications.setNotificationHandler({
 const NotificationProvider = ({children}: PropsWithChildren) => {
     const { profile } = useAuth();
     const [expoPushToken, setExpoPushToken] = useState('');
+    const router = useRouter();
     const [notification, setNotification] = useState<Notifications.Notification | undefined>(
       undefined
     );
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
+
 
     const savePushToken = async (newToken: string | undefined) => {
         if (!newToken || !profile) {
@@ -31,25 +34,30 @@ const NotificationProvider = ({children}: PropsWithChildren) => {
     }
   
     useEffect(() => {
-      registerForPushNotificationsAsync()
-        .then(token => savePushToken(token))
-        .catch((error: any) => setExpoPushToken(`${error}`));
-  
+      if (profile) {
+        registerForPushNotificationsAsync()
+          .then(token => savePushToken(token))
+          .catch((error: any) => setExpoPushToken(`${error}`));
+      } else {
+        setExpoPushToken(''); // Clear the token if there's no profile
+      }
+    
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
         setNotification(notification);
       });
-  
+    
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
         console.log("RESPONSE", response);
+        router.push('/(user)/orders');
       });
-  
+    
       return () => {
         notificationListener.current &&
           Notifications.removeNotificationSubscription(notificationListener.current);
         responseListener.current &&
           Notifications.removeNotificationSubscription(responseListener.current);
       };
-    }, []);
+    }, [profile]); // Re-run this effect when profile changes    
 
     return (
         <>
