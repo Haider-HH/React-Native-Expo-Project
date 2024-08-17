@@ -12,7 +12,7 @@ serve(async (req: Request) => {
 
     const ephemeralKey = await stripe.ephemeralKeys.create(
       {customer: customer},
-      {apiVersion: "2020-08-27"}
+      {apiVersion: "2024-06-20"}
     );
     console.log("Ephemeral Key:", ephemeralKey);
 

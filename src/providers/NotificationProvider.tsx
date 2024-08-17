@@ -4,6 +4,7 @@ import {registerForPushNotificationsAsync} from "../lib/notifications";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./AuthProvider";
 import { useRouter } from 'expo-router';
+import { Linking } from "react-native";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -48,7 +49,8 @@ const NotificationProvider = ({children}: PropsWithChildren) => {
     
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
         console.log("RESPONSE", response);
-        router.push('/(user)/orders');
+        const url = response.notification.request.content.data.url;
+        router.push(url);
       });
     
       return () => {

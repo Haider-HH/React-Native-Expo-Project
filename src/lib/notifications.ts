@@ -58,7 +58,7 @@ export async function sendPushNotification(expoPushToken: string, body: string, 
       sound: 'default',
       title: `Pizza Of Suffer 🍕. Order #${orderNumber}`,
       body: `Your Order Status is: ${body}`,
-      data: { someData: 'goes here' },
+      data: { "url": '/(user)/orders/' },
     };
   
     await fetch('https://exp.host/--/api/v2/push/send', {
