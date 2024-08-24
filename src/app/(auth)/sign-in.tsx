@@ -5,12 +5,14 @@ import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
 import { supabase } from '@/src/lib/supabase';
+import { useAppDispatch } from '@/src/redux/hooks';
+import { fetchSession } from '@/src/features/auth/authSlice';
 
 const SignIn = () => {
     const [form, setForm] = useState({email: '', password: ''})
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const dispatch = useAppDispatch()
     // this function connects the backend with the frontend.
     const signInWithEmail = async () => {
         setLoading(true);
@@ -22,6 +24,7 @@ const SignIn = () => {
         if (error) {
             Alert.alert("Error", error.message)
         }
+        await dispatch(fetchSession());
         setLoading(false);
     }
     // the validationInput and onSubmit has no use for now (4/8/2024)

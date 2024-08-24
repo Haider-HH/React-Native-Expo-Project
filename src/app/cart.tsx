@@ -1,19 +1,76 @@
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, Platform, FlatList, Alert, BackHandler } from 'react-native'
 import React, { useEffect } from 'react';
-import { useCart } from '../providers/cartProvider';
 import CartListItem from '../components/CartListItem';
 import Button from '../components/Button';
 import Entypo from '@expo/vector-icons/Entypo';
 import { router } from 'expo-router';
 import Colors from '../constants/Colors';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { clearCart, selectCart } from '../features/cart/cartSlice';
+import { useInsertOrder } from '../api/orders';
+import { useInsertOrderItems } from '../api/order-items';
+import { Tables } from '../types';
+import { initializePaymentSheet, openPaymentSheet } from '../lib/stripe';
 
 
 // this file renders the cart screen (shows the details of the current order [this screen is for the user only])
 
 const CartScreen = () => {
 
-  const { items, total, checkoutWithCard, checkoutCash } = useCart(); // it uses context instead of props to avoid something called "props drilling"
+  // const { items, total, checkoutWithCard, checkoutCash } = useCart(); // it uses context instead of props to avoid something called "props drilling"
+  const { items, total } = useAppSelector(selectCart);
+  const { mutate: insertOrder } = useInsertOrder();
+  const { mutate: insertOrderItems } = useInsertOrderItems();
+
+  const dispatch = useAppDispatch();
+
+  const saveOrderItems = (order: Tables<'orders'>) => {
+    const orderItems = items.map((cartItem) => ({
+      order_id: order.id,
+      product_id: cartItem.product_id,
+      quantity: cartItem.quantity,
+      size: cartItem.size,
+    }))    
+    insertOrderItems(orderItems, {
+      onSuccess() {
+        dispatch(clearCart());
+        router.push(`/(user)/orders/`);
+    }});
+  }
+
+  const checkoutWithCard = async () => {
+    const initialized = await initializePaymentSheet(Math.round(total * 100));
+    if (!initialized) {
+        Alert.alert("Error", "Failed to initialize payment sheet");
+        return;
+    }
+    const payed = await openPaymentSheet();
+    if (!payed) {
+        return;
+    }
+    insertOrder({
+        total,
+        user_id: ""
+    }, { onSuccess: saveOrderItems });
+  };
+
+  const handleCashCheckout = () => {
+    console.log("checkoutCash action triggered");
+
+    insertOrder(
+      {
+        total,
+        user_id: '', // Add correct user_id logic here
+      },
+      {
+        onSuccess: (order) => {
+          console.log("Order successfully created", order);
+          saveOrderItems(order);
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     const backAction = () => {
@@ -31,22 +88,22 @@ const CartScreen = () => {
 
   const confirmPaymentType = () => {
     Alert.alert("Checkout", "Specify Payment Method", [
-
       {
         text: 'Cancel',
-        style: 'destructive'
+        style: 'destructive',
+        onPress: () => console.log('Cancelled'),
       },
       {
-        text: 'cash',
-        onPress: checkoutCash,
+        text: 'Cash',
+        onPress: handleCashCheckout,
       },
       {
         text: 'Card',
         onPress: checkoutWithCard,
       },
-
-    ])
-  }
+    ]);
+  };
+  
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, padding: 10}}>

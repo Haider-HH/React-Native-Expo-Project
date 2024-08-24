@@ -8,11 +8,13 @@ import { FontAwesome } from '@expo/vector-icons'
 import Colors from "@/src/constants/Colors"
 import { useProduct } from '@/src/api/products'
 import RemoteImage from '@/src/components/RemoteImage'
+import { useAppDispatch } from '@/src/redux/hooks'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const ProductDetails = () => {
-  const { addItem } = useCart();
+  // const { addItem } = useCart();
+  // const dispatch = useAppDispatch();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('S');
   const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
 

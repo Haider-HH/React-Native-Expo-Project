@@ -3,6 +3,9 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { Tables } from "@/src/database.types";
 import { InsertTables, UpdateTables } from "@/src/types";
+import { useAppSelector } from "@/src/redux/hooks";
+import { RootState } from "@/src/redux/store";
+import { selectAuth } from "@/src/features/auth/authSlice";
 
 export const useAdminOrderList = ({ archived = false }) => {
 
@@ -22,7 +25,8 @@ export const useAdminOrderList = ({ archived = false }) => {
 
 export const useUserOrderList = () => {
 
-    const {session} = useAuth();
+    // const {session} = useAuth();
+    const { session } = useAppSelector(selectAuth);
     const id = session?.user.id;
 
     return useQuery<Tables<'orders'>[]>({
@@ -52,7 +56,8 @@ export const useOrderDetails = (id: number) => {
 
 export const useInsertOrder = () => {
     const queryClient = useQueryClient();
-    const { session } = useAuth();
+    // const { session } = useAuth();
+    const { session } = useAppSelector(selectAuth)
     const userId = session?.user.id;
 
     return useMutation({

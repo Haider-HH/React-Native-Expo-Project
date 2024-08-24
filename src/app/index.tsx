@@ -1,13 +1,17 @@
 import { ActivityIndicator, Alert, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../components/Button';
 import { Link, Redirect, Stack } from 'expo-router';
 import { useAuth } from '../providers/AuthProvider';
 import { supabase } from '../lib/supabase';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { fetchSession, selectAuth } from '../features/auth/authSlice';
 
 const Index = () => {
-  const { session, loading, profile, isAdmin } = useAuth();
+  // const { session, loading, profile, isAdmin } = useAuth();
+  const { session, loading, profile, isAdmin } = useAppSelector(selectAuth);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleSignOut= async () => {
     setIsSigningOut(true);
@@ -20,8 +24,17 @@ const Index = () => {
     if (error) {
       Alert.alert("Error Signing Out", error.message);
     }
+    await dispatch(fetchSession());
     setIsSigningOut(false);
-  }
+  };
+
+  useEffect(() => {
+    dispatch(fetchSession());
+  }, [dispatch])
+
+  console.log("SESSION", session);
+  console.log("PROFILE", profile);
+  console.log("LOADING", loading);
   
   if (loading) {
     return <ActivityIndicator />;

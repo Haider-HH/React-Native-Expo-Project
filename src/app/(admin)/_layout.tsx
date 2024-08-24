@@ -4,6 +4,8 @@ import { Redirect, Tabs } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
 import { useAuth } from '@/src/providers/AuthProvider';
+import { useAppSelector } from '@/src/redux/hooks';
+import { selectAuth } from '@/src/features/auth/authSlice';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -15,7 +17,8 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
 
-  const { isAdmin } = useAuth();
+  // const { isAdmin } = useAuth();
+  const { isAdmin } = useAppSelector(selectAuth);
 
   if (!isAdmin) {
     return <Redirect href={'/'}/>
