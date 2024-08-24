@@ -47,7 +47,7 @@ export default function OrderScreen() {
         }
       />
       :
-      <View>
+      <View style={{width: '100%', justifyContent: 'center', alignItems: "center"}}>
         <Entypo 
         name="circle-with-cross"
         size={120}
