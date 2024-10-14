@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchSession, selectAuth } from '../features/auth/authSlice';
 
 const Index = () => {
-  // const { session, loading, profile, isAdmin } = useAuth();
+  // const { session, loading, profile, isAdmin } = useAuth();dfvdfkjnvldjfvljndfbspvkjbsecposbpisdbsdpmvisvpsv
   const { session, loading, profile, isAdmin } = useAppSelector(selectAuth);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const dispatch = useAppDispatch();
