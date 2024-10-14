@@ -7,12 +7,15 @@ import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/cartProvider'
 import { useProduct } from '@/src/api/products'
 import RemoteImage from '@/src/components/RemoteImage'
+import { useAppDispatch } from '@/src/redux/hooks'
+import { addItemWithUUID } from '@/src/features/cart/cartSlice'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // specifying the type to PizzaSize[] restricts this variable to accept only one of these 4 strings (see types.ts)
 
 const ProductDetails = () => {
 
-  const { addItem } = useCart(); // access and manage the cart using this function provided by context provider instead of using props
+  // const { addItem } = useCart(); // access and manage the cart using this function provided by context provider instead of using props
+  const dispatch = useAppDispatch();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('S');
   const { id: idString } = useLocalSearchParams(); // it's a hook used to get the id of the product that we pressed
 
@@ -41,7 +44,7 @@ const ProductDetails = () => {
   const addToCart = () => {
     if(!product) return;
     // Alert.alert('Added to Cart Successfully', `Pizza Size: ${selectedSize}\nPrice: $${product.price}`)
-    addItem(product, selectedSize);
+    dispatch(addItemWithUUID({product, size: selectedSize}));
     router.push('/cart');
   }
 

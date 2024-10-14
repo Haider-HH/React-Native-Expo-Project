@@ -1,8 +1,11 @@
+import { selectAuth } from '@/src/features/auth/authSlice';
 import { useAuth } from '@/src/providers/AuthProvider';
+import { useAppSelector } from '@/src/redux/hooks';
 import { Redirect, Stack } from 'expo-router';
 
 export default function AuthLayout() {
-  const { session } = useAuth();
+  // const { session } = useAuth();
+  const { session } = useAppSelector(selectAuth);
 
   if (session) {
     return <Redirect href={'/'} />

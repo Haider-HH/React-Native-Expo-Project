@@ -5,13 +5,17 @@ import { useGetProfileData } from '@/src/api/profiles'
 import { supabase } from '@/src/lib/supabase'
 import { Entypo } from '@expo/vector-icons'
 import Colors from '@/src/constants/Colors'
+import { useAppDispatch, useAppSelector } from '@/src/redux/hooks'
+import { fetchSession, selectAuth } from '@/src/features/auth/authSlice'
 
 const profile = () => {
-    const { session } = useAuth();
+    // const { session } = useAuth();
+    const { session } = useAppSelector(selectAuth);
     const id = session?.user.id;
     const {data: userData, error, isLoading} = useGetProfileData(id!);
 
     const [isSigningOut, setIsSigningOut] = useState(false);
+    const dispatch = useAppDispatch();
 
     const handleSignOut= async () => {
       setIsSigningOut(true);
@@ -24,6 +28,7 @@ const profile = () => {
       if (error) {
         Alert.alert("Error Signing Out", error.message);
       }
+      dispatch(fetchSession());
       setIsSigningOut(false);
     }
     

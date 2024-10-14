@@ -1,10 +1,12 @@
 import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView } from 'react-native'
 import React, { useState } from 'react'
-import { Link, Stack } from 'expo-router';
+import { Link, router, Stack } from 'expo-router';
 import Colors from '@/src/constants/Colors';
 import Button from '@/src/components/Button';
 import { Entypo } from '@expo/vector-icons';
 import { supabase } from '@/src/lib/supabase';
+import { useAppDispatch } from '@/src/redux/hooks';
+import { fetchSession } from '@/src/features/auth/authSlice';
 
 
 
@@ -13,6 +15,7 @@ const SignUp = () => {
     const [form, setForm] = useState({email: '', password: '', username: '', phone_number: '', full_name: ''});
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const dispatch = useAppDispatch();
 
     // this function connects the backend with the frontend.
     const signUpWithEmail = async () => {
@@ -41,7 +44,9 @@ const SignUp = () => {
                 return;
             };
             Alert.alert('Success', "Account Created Successfully");
+            router.push('/sign-in')
         }
+        dispatch(fetchSession());
         setLoading(false);
     }
 

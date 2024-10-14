@@ -8,13 +8,16 @@ import { useCart } from '../providers/cartProvider';
 import { defaultImage } from './ProductList';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import RemoteImage from './RemoteImage';
+import { useAppDispatch } from '../redux/hooks';
+import { updateQuantity } from '../features/cart/cartSlice';
 
 type CartListItemProps = {
     cartItem: CartItem;
 }
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
-    const { updateQuantity } = useCart();
+    // const { updateQuantity } = useCart();
+    const dispatch = useAppDispatch();
     return (
         <View style={styles.container}>
             <RemoteImage 
@@ -43,13 +46,13 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
                     size={22}
                     color='black'
                     style={{paddingBottom: 3}}
-                    onPress={() => updateQuantity(cartItem.id, -1)}
+                    onPress={() => dispatch(updateQuantity({itemId: cartItem.id, amount: -1}))}
                   />
                 )
                 :
                 (
                   <FontAwesome
-                    onPress={() => updateQuantity(cartItem.id, -1)}
+                    onPress={() => dispatch(updateQuantity({itemId: cartItem.id, amount: -1}))}
                     name="minus"
                     color="black"
                     size={15}
@@ -59,7 +62,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
                 }
                 <Text style={styles.quantity}>{cartItem.quantity}</Text>
                 <FontAwesome
-                onPress={() => updateQuantity(cartItem.id, 1)}
+                onPress={() => dispatch(updateQuantity({itemId: cartItem.id, amount: 1}))}
                 name="plus"
                 size={15}
                 color="black"
